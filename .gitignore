@@ -1,2 +1,10 @@
 data/**/*.xml
 data/**/*.pyc
+proposal/*.aux
+proposal/*.bbl
+proposal/*.blg
+proposal/*.dvi
+proposal/*.log
+proposal/*.out
+proposal/*.gz
+proposal/*.log
