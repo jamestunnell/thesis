@@ -1,0 +1,111 @@
+\documentclass[a4paper]{scrartcl}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{graphicx}
+
+\begin{document}
+
+\title{A Model for Software Defect Discovery}
+\subtitle{Thesis Proposal}
+\author{James Tunnell}
+\maketitle
+
+\section{Introduction}
+Search-Based Software Engineering (SBSE) is an emerging area of research where Software Engineering problems are posed as search problems. In this way, generic search-based optimization methods can be applied. SBSE problems include The Next Release Problem, Structural Test Data Generation, and Software Cost Estimation\cite{harman2012search}.
+
+To make SBSE of practical use on a software project, a method is needed to model the practical details of a project in an abstract way so that is amenable to search-based optimization. In this paper, such a model is developed toward making use of algorithms developed for the Next Release Problem (NRP).
+
+In the NRP, proposed features have an associated cost, so that an optimal feature subset can be selected. Now it might be suggested that the estimated cost of a proposed feature can be used directly in a NRP algorithm. But, there is a practical detail that prevents this: the total cost of a feature includes both the cost of implementation \emph{and} the cost of fixing associated defects.
+
+Of course, defects that will be associated with a feature are not known in advance, so determining their exact cost would be impossible. But if associated defects can be predicted, then the cost of such defects can be estimated.
+
+To this end, a model is proposed for predicting the defects associated with some proposed feature, with some level of confidence. The model will be probabilistic, and will be built using a software project's historical data, available from an issue tracking database.
+
+Exploratory data analysis will be conducted as a preliminary step. The results of this step will form the basis for assumptions made by the model. 
+
+\section{Background}
+The Next Release Problem (NRP) was defined by Bagnall et al\cite{bagnall2001next}, and was shown to be NP-Hard. Being abstract in its treatment of feature cost, a broad range of optimization techniques can be applied to the NRP, such as integer programming, hill climbing, simulated annealing, genetic algorithms, etc. The NRP is the subject of academic research in the area of Search-Based Software Engineering\cite{zhang2007multi,xuan2012solving,jiang2010hybrid}.
+
+The NRP is designed to aid software project planners, who have multiple customers to satisfy. The project planner would like to maximize the revenue produced from completing the project. This is all described mathematically as follows.
+
+A software project has a set $R$ of all possible requirements (new features and enhancements) that might be includeed in the next software release. A customer $i$ is satisfied by completing a subset $R_i \subseteq R$. The importance of a customer $i$ is given by the weight, $w_i \in \mathbb{Z}^+$.
+
+Requirements may have acyclic dependencies, or prerequisites, that must be completed first. A subset that includes all prerequisite requirements, recursively, is indicated by $\hat{R}_i$, and should be taken to mean
+\begin{equation}
+\hat{R}_i = R_i \cup ancestors(R_i)
+\end{equation}
+
+For example, if $R_1 = \{r_2\}$, and $r_1$ is a prerequisite for $r_2$, then $\hat{R}_1 = \{r_1,r_2\}$.
+
+A requirement $r \in R$ has a cost $cost(r) \in \mathbb{Z}^+$, associated with its implementation, not considering the cost of any prerequisite requirements. Then, the cost for some subset $R' \subseteq R$ will be
+\begin{equation}
+cost(R') = \sum \{cost(r) | r \in \hat{R}_i \}
+\end{equation}
+
+Once customer i is satisfied, their weight $w_i$ contributes to the total revenue from the project, as in
+\begin{equation}
+\sum_{i \in S} w_i
+\end{equation}
+
+So, the NRP is posed as follows: for a group of $n$ customers, select the subset $S \subseteq \{ 1,2,...,n \}$ that maximizes total revenue, while keeping the total cost within some budget constraint $B$. This is given by 
+\begin{equation}
+\begin{split}
+maximize~~& \sum_{i \in S} w_i \\
+subject~to~~~& cost(\bigcup_{i \in S} \hat{R}_i) \le B
+\end{split}
+\end{equation}
+
+\section{Related Work}
+
+Software defect (bug) prediction typically involves a detailed analysis of code or proposed design changes. In Akiyama \cite{akiyama1971example} predicted defect count based on lines of code (LOC), number of decisions, and the number of subroutine calls. Gafney \cite{gaffney1984estimating} likewise predicted defect count based on LOC. Rather than code itself, Henry and Kafura \cite{henry1984evaluation} define metrics that are based on information taken from design documents, to be used in defect prediction.
+
+TODO: discuss more about other methods
+
+Rather, the approach taken in this paper is to avoid such detailed code analysis, and instead simply look at defect occurences over time, in order to find a suitably fitting mathematical model. A similar approach is used by Li et al. \cite{li2004empirical} to fit historical defect occurences to several mathematical models. Their work considers defect occurences, looking for trends in regression parameters over consecutive releases. They found that the Weibull model fit best in 73\% of the tested software releases. But unlike the approach used by Li et al., which considers only defects by themselves, in this paper the goal is to develop a model for predicting defect occurence based on the completion of features.
+
+\section{Proposed Work}
+The Next Release Problem (NRP) is not readily applicable to the release planning process in a software project. This is due to the abstract nature of the NRP. But by modeling the practical details of release planning, the way could be paved for making use of optimization techniques already developed for the NRP.
+
+Feature cost is a crtitical part of the NRP. An inaccurate cost estimate might mislead a project planner into believing that a feature subset can be implemented inside the budgeted constraint when that may not be the case. And because the cost of fixing defects contributes to the total cost of a feature, the cost of fixing defects should be accounted for.
+
+To this end, the work proposed here is to develop a model for predicting the defects associated with some proposed feature, with some level of confidence. The model will be probabilistic, and will be built using a software project's historical data, available from an issue tracking database.
+
+Before a model is developed, exploratory data analysis will be performed on each project, as a preliminary step. The results of this step will form the basis for assumptions made by the model. 
+
+\subsection{Exploratory Data Analysis}
+In this phase of work, historical data from each software project will be analyzed over both the long term (all releases) and short term (each major release). The long-term analysis will provide an overview of each project, and possibly reveal some consistent patterns between projects. The short-term analysis will serve to isolate each major release as a cause-and-effect period (changes being the causes, and bugs being the effects).
+
+Analysis will consist of two parts: descriptive statistics and distribution fitting.
+
+\subsubsection{Descriptive Statistics}
+TODO
+
+\subsubsection{Fitted Distributions}
+TODO
+
+\section{Results}
+\subsection{Exploratory Data Analysis}
+TODO
+
+\appendix
+\section{Software Requirements}
+The software developed for this paper can be run on any platform that supports Python and R. Besides this basic requirement, here are the other dependencies:
+\paragraph{Python dependencies:}
+\begin{itemize}
+\item
+devtools: adds github\_install function. Install by running ``\verb|install.packages("devtools")|" on the R command line.
+\item
+docopt: for defining command-line interfaces and parsers. See the \href{https://github.com/docopt/docopt}{GitHub page} for installation instructions.
+\end{itemize}
+
+\paragraph{R dependencies:}
+\begin{itemize}
+\item{docopt: for defining command-line interfaces and parsers. See the \href{https://github.com/edwindj/docopt.R}{GitHub page} for installation instructions.}
+\end{itemize}
+
+
+\bibliography{references}
+\bibliographystyle{abbrv}
+
+\end{document}
