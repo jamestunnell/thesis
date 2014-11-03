@@ -1,26 +1,81 @@
-x <- c(1,2,2,3,4,4,5,6,6,7,7,7,8,9)
+#!/usr/bin/env Rscript
 
-cat(paste("mean:", mean(x)))
-cat(paste("median:", median(x)))
-cat(paste("std dev:", sd(x)))
-cat(paste("variance:", var(x)))
+'usage:
+    descriptive_stats.R INFILE OUTDIR [options]
 
-# midmean is the 25% trimmed mean, which should be 25% trimmed from each side
-# of the sorted data. In R, using the 'mean' function with the 'trim' param
-# will only trim that % total. So to achieve midmean, set trim to 50%.
-midmean <- mean(x, trim = 0.5)
-cat(paste("midmean:",midmean))
+arguments:
+    INFILE A text file, containing CSV-like table
+    OUTDIR Path to a directory where descriptive statistics results can be saved as files
 
-quantile(x) # print out quantiles!
-boxplot(x) # make a boxplot!
-hist(x) # plot a histogram!
+options:
+  -l --log  Send text output to a log file
+' -> doc
 
-# plot an empirical cumulative distribution function
-n <- length(x)
-plot(sort(x), (1:n)/n, type="s",ylim=c(0,1))
+library(docopt) # load the docopt library
 
-y <- c(2,3,3,4,4,4,5,6,6,7,8,8)
-par(mfrow=c(1,2)) # set up for 1 row, 2 columns
-boxplot(x)
-boxplot(y)
-par(mfrow=c(1,1)) # reset layout for 1x1, affecting subsequent plots
+opts <- docopt(doc) # retrieve the command-line arguments
+
+infile <- opts$INFILE
+outdir <- normalizePath(paste0(opts$OUTDIR,"/"))
+
+if(opts$log){
+  sink(file = paste0(outdir,"/log.txt"))
+}
+
+cat(c("Reading table from", infile, "...\n"))
+
+data <- read.table(infile, header = TRUE)
+attach(data)
+
+# -----------------------------------------------------------------------
+
+cat(c("Beginning analyis, writing results to",outdir,"...\n"))
+
+summary_file <- paste0(outdir,"/summary.txt")
+cat("",file=summary_file)
+for(typ in levels(type)){
+  priorities <- priority[type == typ]
+  freqcounts <- table(priorities)
+  fbasename <- paste0(outdir,"/",typ,"_priority_freqcount")
+
+#    pngname <- paste0(outdir,"/",typ,"_daystoresolve_boxplot.png")
+#    png(filename = pngname, width=800, height=800)
+#    boxplot(priority[type==typ],daystoresolve[type==typ],outline=FALSE)
+#    garbage <- dev.off()
+  
+#   ## put freq counts in text table
+#   #write.table(freqcounts, paste0(fbasename,".txt"), sep=" ")
+#   
+  # put freq counts in bar plot image
+  png(filename = paste0(fbasename,".png"), width=800, height=800)
+  title <- paste0("Frequency of ", typ, "s, by priority")
+  barplot(freqcounts,main=title,xlab="priority")
+  dev.off()
+   
+  # histogram of days-to-resolve by priority
+  for(pri in sort(unique(priorities))){
+    indices <- intersect(which(type == typ),which(priority == pri))
+    if(length(indices) > 0){
+      days = daystoresolve[indices]
+      title <- paste0("Time to resolve priority ", pri, " ", typ, "s (in days)")
+      xlab <- "Time to resolve (days)"
+      
+      # summary stats
+      cat(title,file=summary_file,sep="\n",append=TRUE)
+      out<-capture.output(summary(days))
+      cat(out,file=summary_file,sep="\n",append=TRUE)
+      cat("",file=summary_file,sep="\n",append=TRUE)
+      
+      # boxplot and histogram, side-by-side
+      pngname <- paste0(outdir,"/",typ,"_pri",pri,"_daystoresolve.png")
+      png(filename = pngname, width=800, height=800)
+      par(mfrow=c(2,1)) # make sure this is placed AFTER calling the device (e.g., png())
+      boxplot(days,outline=FALSE, horizontal = T, main=title, xlab=xlab)
+      hist(days, breaks="FD", probability = F, main=title, xlab=xlab)
+      dev.off()
+      par(mfrow=c(1,1))
+    }
+  }
+}
+
+cat("Analysis complete.\n")

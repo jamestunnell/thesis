@@ -12,7 +12,7 @@
 \maketitle
 
 \section{Introduction}
-Search-Based Software Engineering (SBSE) is an emerging area of research where Software Engineering problems are posed as search problems. In this way, generic search-based optimization methods can be applied. SBSE problems include The Next Release Problem, Structural Test Data Generation, and Software Cost Estimation\cite{harman2012search}.
+Search-Based Software Engineering (SBSE) is an emerging area of research, where search-based optimization techniques are applied to the Software Engineering problem domain. SBSE problems include The Next Release Problem, Structural Test Data Generation, and Software Cost Estimation\cite{2012_harman_search}.
 
 To make SBSE of practical use on a software project, a method is needed to model the practical details of a project in an abstract way so that is amenable to search-based optimization. In this paper, such a model is developed toward making use of algorithms developed for the Next Release Problem (NRP).
 
@@ -22,14 +22,20 @@ Of course, defects that will be associated with a feature are not known in advan
 
 To this end, a model is proposed for predicting the defects associated with some proposed feature, with some level of confidence. The model will be probabilistic, and will be built using a software project's historical data, available from an issue tracking database.
 
-Exploratory data analysis will be conducted as a preliminary step. The results of this step will form the basis for assumptions made by the model. 
+Exploratory data analysis was conducted on a software project, \href{https://www.mongodb.org}{MongoDB}, in order to asses the feasibility of such a predictive model.
+
+The remainder of this document is organized as follows. First, the \nameref{sec:background} section provides details on the Next Release Problem and the methods used software project data collection. Next, the \nameref{sec:related_work} section describes other approaches used in defect prediction, which mainly center around static code analysis. Then, the \nameref{sec:exploratory} section presents the  methods used, and results obtained for exploratory data analysis. Finally, the \nameref{sec:proposed_work} section lays out the specific tasks that are proposed in order to design an effective predictive model, in the context of the results obtained from exploratory data analysis.
 
 \section{Background}
-The Next Release Problem (NRP) was defined by Bagnall et al\cite{bagnall2001next}, and was shown to be NP-Hard. Being abstract in its treatment of feature cost, a broad range of optimization techniques can be applied to the NRP, such as integer programming, hill climbing, simulated annealing, genetic algorithms, etc. The NRP is the subject of academic research in the area of Search-Based Software Engineering\cite{zhang2007multi,xuan2012solving,jiang2010hybrid}.
+\label{sec:background}
+In this section, first the Next Release Problem will be introduced and described more formally. Then, the methods used for collecting historical data from software projects will be discussed.
+
+\subsection{The Next Release Problem (NRP)}
+The Next Release Problem (NRP) was defined by Bagnall et al\cite{2001_bagnall_nrp}, and was shown to be NP-Hard. Being abstract in its treatment of feature cost, a broad range of optimization techniques can be applied to the NRP, such as integer programming, hill climbing, simulated annealing, genetic algorithms, etc. The NRP is the subject of academic research in the area of Search-Based Software Engineering\cite{2010_jiang_hybrid,2012_xuan_solving,2007_zhang_multi_obj_nrp}.
 
 The NRP is designed to aid software project planners, who have multiple customers to satisfy. The project planner would like to maximize the revenue produced from completing the project. This is all described mathematically as follows.
 
-A software project has a set $R$ of all possible requirements (new features and enhancements) that might be includeed in the next software release. A customer $i$ is satisfied by completing a subset $R_i \subseteq R$. The importance of a customer $i$ is given by the weight, $w_i \in \mathbb{Z}^+$.
+A software project has a set $R$ of all possible requirements (new features and enhancements) that might be included in the next software release. A customer $i$ is satisfied by completing a subset $R_i \subseteq R$. The importance of a customer $i$ is given by the weight, $w_i \in \mathbb{Z}^+$.
 
 Requirements may have acyclic dependencies, or prerequisites, that must be completed first. A subset that includes all prerequisite requirements, recursively, is indicated by $\hat{R}_i$, and should be taken to mean
 \begin{equation}
@@ -43,7 +49,7 @@ A requirement $r \in R$ has a cost $cost(r) \in \mathbb{Z}^+$, associated with i
 cost(R') = \sum \{cost(r) | r \in \hat{R}_i \}
 \end{equation}
 
-Once customer i is satisfied, their weight $w_i$ contributes to the total revenue from the project, as in
+Once customer $i$ is satisfied, their weight $w_i$ contributes to the total revenue from the project, as in
 \begin{equation}
 \sum_{i \in S} w_i
 \end{equation}
@@ -56,40 +62,46 @@ subject~to~~~& cost(\bigcup_{i \in S} \hat{R}_i) \le B
 \end{split}
 \end{equation}
 
-\section{Related Work}
+\subsection{Historical Data Collection}
+The empirical data used to establish a predictive model will be taken from software project historical data, found in an Issue Tracking System (ITS). To facilitate this data collection, only projects that have a freely available ITS will be considered. Included in this category are open-source software projects. Also, because there are many such ITSs, only projects that use the \href{https://www.atlassian.com/software/jira}{JIRA} ITS will be considered.
 
-Software defect (bug) prediction typically involves a detailed analysis of code or proposed design changes. In Akiyama \cite{akiyama1971example} predicted defect count based on lines of code (LOC), number of decisions, and the number of subroutine calls. Gafney \cite{gaffney1984estimating} likewise predicted defect count based on LOC. Rather than code itself, Henry and Kafura \cite{henry1984evaluation} define metrics that are based on information taken from design documents, to be used in defect prediction.
+Data collection will be semi-automatic. First, there is a manual step is to export data from JIRA as XML. Then, pertinent data will be automatically extracted by a Python script and then saved as a delimited table text file for later analysis in R.
+
+\section{Related Work}
+\label{sec:related_work}
+
+Software defect (bug) prediction typically involves a detailed analysis of code or proposed design changes. Akiyama \cite{1971_akiyama} predicted defect counts based on lines of code (LOC), number of decisions, and the number of subroutine calls. Gafney \cite{1984_gaffney_estimating} likewise predicted defect count based on LOC. Rather than code itself, Henry and Kafura \cite{1984_henry_evaluation} define metrics that are based on information taken from design documents, to be used in defect prediction.
 
 TODO: discuss more about other methods
 
-Rather, the approach taken in this paper is to avoid such detailed code analysis, and instead simply look at defect occurences over time, in order to find a suitably fitting mathematical model. A similar approach is used by Li et al. \cite{li2004empirical} to fit historical defect occurences to several mathematical models. Their work considers defect occurences, looking for trends in regression parameters over consecutive releases. They found that the Weibull model fit best in 73\% of the tested software releases. But unlike the approach used by Li et al., which considers only defects by themselves, in this paper the goal is to develop a model for predicting defect occurence based on the completion of features.
+Rather than requiring a detailed code analysis to predict defects, the approach taken in this paper is to look at defect occurrences over time, in order to find a suitably fitting mathematical model. A similar approach is used by Li et al. \cite{2004_li_emperical_eval} to fit historical defect occurrences to several mathematical models. Their work considers defect occurrences, looking for trends in regression parameters over consecutive releases. They found that the Weibull model fit best in 73\% of the tested software releases. But unlike the approach used by Li et al., which considers only defects by themselves, in this paper the goal is to develop a model for predicting defect occurrence based on the completion of features.
 
-\section{Proposed Work}
-The Next Release Problem (NRP) is not readily applicable to the release planning process in a software project. This is due to the abstract nature of the NRP. But by modeling the practical details of release planning, the way could be paved for making use of optimization techniques already developed for the NRP.
+\section{Exploratory Data Analysis}
+\label{sec:exploratory}
+To asses the feasibility of developing a predictive model for software defects, exploratory data analysis is performed. This section presents the methods used and discusses the results obtained.
 
-Feature cost is a crtitical part of the NRP. An inaccurate cost estimate might mislead a project planner into believing that a feature subset can be implemented inside the budgeted constraint when that may not be the case. And because the cost of fixing defects contributes to the total cost of a feature, the cost of fixing defects should be accounted for.
-
-To this end, the work proposed here is to develop a model for predicting the defects associated with some proposed feature, with some level of confidence. The model will be probabilistic, and will be built using a software project's historical data, available from an issue tracking database.
-
-Before a model is developed, exploratory data analysis will be performed on each project, as a preliminary step. The results of this step will form the basis for assumptions made by the model. 
-
-\subsection{Exploratory Data Analysis}
-In this phase of work, historical data from each software project will be analyzed over both the long term (all releases) and short term (each major release). The long-term analysis will provide an overview of each project, and possibly reveal some consistent patterns between projects. The short-term analysis will serve to isolate each major release as a cause-and-effect period (changes being the causes, and bugs being the effects).
+\subsection{Data Analysis Methods}
+Historical data from each software project will be analysed over both the long term (all releases) and short term (each major release). The long-term analysis will provide an overview of each project, and possibly reveal some consistent patterns between projects. The short-term analysis will serve to isolate each major release as a cause-and-effect period (changes being the causes, and bugs being the effects).
 
 Analysis will consist of two parts: descriptive statistics and distribution fitting.
 
-\subsubsection{Descriptive Statistics}
-TODO
+\subsection{Results}
 
-\subsubsection{Fitted Distributions}
-TODO
+\section{Proposed Work}
+\label{sec:proposed_work}
 
-\section{Results}
-\subsection{Exploratory Data Analysis}
+The Next Release Problem (NRP) is not readily applicable to the release planning process in a software project. This is due to the abstract nature of the NRP. But by modelling the practical details of release planning, the way could be paved for making use of optimization techniques already developed for the NRP.
+
+Feature cost is a critical part of the NRP. An inaccurate cost estimate might mislead a project planner into believing that a feature subset can be implemented inside the budgeted constraint when that may not be the case. And because the cost of fixing defects contributes to the total cost of a feature, the cost of fixing defects should be accounted for.
+
+To this end, the work proposed here is to develop a model for predicting the defects associated with some proposed feature, with some level of confidence. The model will be probabilistic, and will be built using a software project's historical data, available from an issue tracking database.
+
+\subsection{Timeline}
 TODO
 
 \appendix
 \section{Software Requirements}
+\label{sw_reqs}
 The software developed for this paper can be run on any platform that supports Python and R. Besides this basic requirement, here are the other dependencies:
 \paragraph{Python dependencies:}
 \begin{itemize}
@@ -97,6 +109,8 @@ The software developed for this paper can be run on any platform that supports P
 devtools: adds github\_install function. Install by running ``\verb|install.packages("devtools")|" on the R command line.
 \item
 docopt: for defining command-line interfaces and parsers. See the \href{https://github.com/docopt/docopt}{GitHub page} for installation instructions.
+\item
+BeatifulSoup: for processing XML files. See the \href{http://www.crummy.com/software/BeautifulSoup}{support page} for installation instructions.
 \end{itemize}
 
 \paragraph{R dependencies:}
