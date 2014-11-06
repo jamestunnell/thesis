@@ -3,10 +3,11 @@
 \usepackage{amsmath}
 \usepackage{hyperref}
 \usepackage{graphicx}
+\usepackage{pgfgantt}
 
 \begin{document}
 
-\title{A Model for Software Defect Discovery}
+\title{A Probabilistic Model for Software Defect Prediction}
 \subtitle{Thesis Proposal}
 \author{James Tunnell}
 \maketitle
@@ -62,30 +63,52 @@ subject~to~~~& cost(\bigcup_{i \in S} \hat{R}_i) \le B
 \end{split}
 \end{equation}
 
-\subsection{Historical Data Collection}
-The empirical data used to establish a predictive model will be taken from software project historical data, found in an Issue Tracking System (ITS). To facilitate this data collection, only projects that have a freely available ITS will be considered. Included in this category are open-source software projects. Also, because there are many such ITSs, only projects that use the \href{https://www.atlassian.com/software/jira}{JIRA} ITS will be considered.
-
-Data collection will be semi-automatic. First, there is a manual step is to export data from JIRA as XML. Then, pertinent data will be automatically extracted by a Python script and then saved as a delimited table text file for later analysis in R.
+\subsection{Issue Tracking Systems}
+The empirical data used to establish a predictive model will be taken from software project historical data, found in an Issue Tracking System (ITS). In addition to tracking bugs, past and present, an ITS can be used to track features, enhancements, or any other type of software process issue. 
 
 \section{Related Work}
 \label{sec:related_work}
 
 Software defect (bug) prediction typically involves a detailed analysis of code or proposed design changes. Akiyama \cite{1971_akiyama} predicted defect counts based on lines of code (LOC), number of decisions, and the number of subroutine calls. Gafney \cite{1984_gaffney_estimating} likewise predicted defect count based on LOC. Rather than code itself, Henry and Kafura \cite{1984_henry_evaluation} define metrics that are based on information taken from design documents, to be used in defect prediction.
 
-TODO: discuss more about other methods
+TODO: discuss more about the above methods
 
-Rather than requiring a detailed code analysis to predict defects, the approach taken in this paper is to look at defect occurrences over time, in order to find a suitably fitting mathematical model. A similar approach is used by Li et al. \cite{2004_li_emperical_eval} to fit historical defect occurrences to several mathematical models. Their work considers defect occurrences, looking for trends in regression parameters over consecutive releases. They found that the Weibull model fit best in 73\% of the tested software releases. But unlike the approach used by Li et al., which considers only defects by themselves, in this paper the goal is to develop a model for predicting defect occurrence based on the completion of features.
+\subsection{Other Approaches to Defect Projection}
+Rather than requiring a detailed code analysis to predict defects, the approach proposed in this paper is to develop a mathematical model based on historical data on defect occurrences. Specifically, the proposed approach is to develop a prediction model using software features as inputs and defects as outputs.
+
+A related approach, used by Li et al.\cite{2004_li_emperical_eval}, is to study only the defect occurrences themselves, and attempt to develop a mathematical model for defect projection. In their work, functions were fitted to a time series of defect occurrences, then the function parameters themselves were extrapolated for each new release. They found that the Weibull model fit best in 73\% of the tested software releases. They attempted to extrapolate model parameters using naïve methods, moving averages, and exponential smoothing, but found these techniques to be "...inadequate in extrapolating model parameters of the Weibull model for defect-occurrence projection". The reason given for this ineffectiveness is the changing nature of the software development system For example, development practices, staffing levels, and usage patterns may all change between releases.
+
+In another related approach, Graves et al.\cite{2000_graves_predicting} develop several models that predict the future distribution of software faults in a given code module. The basis of their predictive models is a statistical analysis of change management data, which describes only the changes made to code files. The best model they found, was a weighted time damp model, where every change in the module files contributed to fault prediction, with time-damping to account for age of changes. They achieved "slightly less successful performance" by basing a generalized linear model on just the modules age and the number of past changes. They also found factors that did not improve model performance: module length, number of developers making changes in the module, and how often a module is changed simultaneously with another module.
 
 \section{Exploratory Data Analysis}
 \label{sec:exploratory}
-To asses the feasibility of developing a predictive model for software defects, exploratory data analysis is performed. This section presents the methods used and discusses the results obtained.
+This section covers the exploratory data analysis which was performed to asses the feasibility of developing a predictive model for software defects. In this section, first the methods used to collect and analyze the data are presented. Then the analysis results are presented and interpreted.
 
-\subsection{Data Analysis Methods}
-Historical data from each software project will be analysed over both the long term (all releases) and short term (each major release). The long-term analysis will provide an overview of each project, and possibly reveal some consistent patterns between projects. The short-term analysis will serve to isolate each major release as a cause-and-effect period (changes being the causes, and bugs being the effects).
+\subsection{Data Collection}
+The MongoDB project was selected for exploratory data analysis. The criteria for project selection, and also the methods used, are explained in the following subsections.
 
-Analysis will consist of two parts: descriptive statistics and distribution fitting.
+\subsubsection{Project Select Criteria}
+To facilitate data collection, only projects that have a freely accessible Issue Tracking System (ITS) were considered. Included in this category are open-source software projects. Also, only projects with a consistent and transparent release policy were considered. Last, a long history of project data was an important consideration. MongoDB met all these considerations.
+
+\subsubsection{Data Collection Methods}
+Data collection is semi-automatic. First, there is a manual step is to export data from JIRA as XML. Then, pertinent data is automatically extracted using a Python script and then saved as a delimited table text file for later analysis in R. The pertinent fields to extract were: issue type, priority, and time to resolve (in days).
+
+\subsection{Data Analysis}
+Historical data from each software project was analyzed over both the long term (all releases) and short term (each significant\footnote{For the MongoDB project, a significant release period is comprised of an odd/even-versioned release pair (e.g. 2.1 and 2.2). The odd-versioned release is unstable, for development work, and the even-versioned release is for bug-fixing only.} release period). The long-term analysis will provide an overview of each project, and possibly reveal some consistent patterns between projects. The short-term analysis will serve to isolate each significant release period as a cause-and-effect period (changes being the causes, and bugs being the effects).
+
+Before presenting the results of data analysis, next the data analysis methods are discussed.
+
+\subsubsection{Data Analysis Methods}
+Project historical data was analyzed as follows. First, for each period of analysis, data was be separated by category: first, by issue type, and then by priority. The remaining data attribute was the time to resolve (in days). Once separated, each data group was summarized using frequency count and descriptive statistics, represented visually and numerically. Last, a good-fitting probability distribution was found for each data group, and shown set against a histogram of the data.
 
 \subsection{Results}
+The analysis results presented are broken up into subsections for long-term and short-term analysis. Following each will be interpretation of the results.
+
+\subsubsection{Long-term Analysis Results}
+TODO
+
+\subsubsection{Short-term Analysis Results}
+TODO
 
 \section{Proposed Work}
 \label{sec:proposed_work}
@@ -94,19 +117,48 @@ The Next Release Problem (NRP) is not readily applicable to the release planning
 
 Feature cost is a critical part of the NRP. An inaccurate cost estimate might mislead a project planner into believing that a feature subset can be implemented inside the budgeted constraint when that may not be the case. And because the cost of fixing defects contributes to the total cost of a feature, the cost of fixing defects should be accounted for.
 
-To this end, the work proposed here is to develop a model for predicting the defects associated with some proposed feature, with some level of confidence. The model will be probabilistic, and will be built using a software project's historical data, available from an issue tracking database.
+To this end, the work proposed here is to develop a model for predicting the defects associated with some proposed feature, with some level of confidence. The model will be probabilistic, and will be built using the same data collected for \nameref{sec:exploratory}.
+
+The breakdown of this work, and the timeline for completing it are discussed next.
+
+\subsection{Modelling Work}
+The modelling work itself can broken up as follows:
+\begin{enumerate}
+\item
+\textbf{Select candidate model structures}. There are potentially many different model structures that can be used. Several structures will be put forth as likely candidates for a model.
+\item
+\textbf{Optimize model parameters}. For each candidate model structure, parameters will be chosen using Maximum Likelihood Estimation (MLE).
+\item
+\textbf{Validate model}. Models will be validated by: TODO 
+\end{enumerate}
 
 \subsection{Timeline}
-TODO
+The proposed modelling work is to be completed over the winter quarter in 2015. A timeline of this work, along with the up-front work of forming a committee and presenting this proposal, is listed in Table \ref{tab:timeline} below.
+
+\begin{table}[h]
+\caption{Timeline for proposed work}
+\centering
+\begin{tabular}{ p{2.5in} l l}
+\hline\hline
+Task & Start Date & End Date \\
+\hline
+Form committee & Nov 10 & Dec 5 \\
+Present proposal & Jan 6 & Jan 16 \\
+Respond to committee feedback & Jan 19 & Jan 23 \\
+Select candidate model structures & Jan 26 & Feb 13 \\
+Optimize parameters and validate models & Feb 9 & Feb 27 \\
+Repeat procedures for two more SW projects & Mar 2 & Mar 20 \\
+\hline
+\end{tabular}
+\label{tab:timeline}
+\end{table}
 
 \appendix
 \section{Software Requirements}
 \label{sw_reqs}
-The software developed for this paper can be run on any platform that supports Python and R. Besides this basic requirement, here are the other dependencies:
+The software developed so far has been used for data collection and analysis. The scripts used can be run on any platform that supports Python and R. Besides this basic requirement, here are the other dependencies:
 \paragraph{Python dependencies:}
 \begin{itemize}
-\item
-devtools: adds github\_install function. Install by running ``\verb|install.packages("devtools")|" on the R command line.
 \item
 docopt: for defining command-line interfaces and parsers. See the \href{https://github.com/docopt/docopt}{GitHub page} for installation instructions.
 \item
@@ -115,6 +167,8 @@ BeatifulSoup: for processing XML files. See the \href{http://www.crummy.com/soft
 
 \paragraph{R dependencies:}
 \begin{itemize}
+\item
+devtools: adds github\_install function. Install by running ``\verb|install.packages("devtools")|" on the R command line.
 \item{docopt: for defining command-line interfaces and parsers. See the \href{https://github.com/edwindj/docopt.R}{GitHub page} for installation instructions.}
 \end{itemize}
 
