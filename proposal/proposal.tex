@@ -66,6 +66,9 @@ subject~to~~~& cost(\bigcup_{i \in S} \hat{R}_i) \le B
 \subsection{Issue Tracking Systems}
 The empirical data used to establish a predictive model will be taken from software project historical data, found in an Issue Tracking System (ITS). In addition to tracking bugs, past and present, an ITS can be used to track features, enhancements, or any other type of software process issue. 
 
+\subsubsection{JIRA}
+\href{https://www.atlassian.com/software/jira}{JIRA} is product by \href{https://www.atlassian.com/}{Atlassian} that provides issue/bug tracking and project management features. For qualified open source projects, Atlassian will provide a JIRA subscription for free.
+
 \section{Related Work}
 \label{sec:related_work}
 
@@ -91,7 +94,13 @@ The MongoDB project was selected for exploratory data analysis. The criteria for
 To facilitate data collection, only projects that have a freely accessible Issue Tracking System (ITS) were considered. Included in this category are open-source software projects. Also, only projects with a consistent and transparent release policy were considered. Last, a long history of project data was an important consideration. MongoDB met all these considerations.
 
 \subsubsection{Data Collection Methods}
-Data collection is semi-automatic. First, there is a manual step is to export data from JIRA as XML. Then, pertinent data is automatically extracted using a Python script and then saved as a delimited table text file for later analysis in R. The pertinent fields to extract were: issue type, priority, and time to resolve (in days).
+Data collection is semi-automatic. First, there is a manual step is to export data from JIRA as XML. This was performed by using the \href{https://jira.mongodb.org}{Web interface for the MongoDB JIRA server}. Then, pertinent data is automatically extracted using a Python script. 
+
+\subsubsection{Data Transformation}
+Once extracted, data undergoes some transformation before analysis. First, because \textit{Sub-task} issues are related to their parent issue, each subtask is converted to an issue with the same type as its parent. Next, in order to compare issues that have the same type and priority, an additional \textit{time-to-resolve} field is derived. This  is done simply by calculating the difference (in days) between \textit{date-created} and \textit{date-resolved}.
+
+\subsubsection{Data Format}
+Once the data is collected, extracted, and transformed, it is finally saved in a text file as a table for later analysis in R. The columns in this table are: type, priority, and time-to-resolve (in days).
 
 \subsection{Data Analysis}
 Historical data from each software project was analyzed over both the long term (all releases) and short term (each significant\footnote{For the MongoDB project, a significant release period is comprised of an odd/even-versioned release pair (e.g. 2.1 and 2.2). The odd-versioned release is unstable, for development work, and the even-versioned release is for bug-fixing only.} release period). The long-term analysis will provide an overview of each project, and possibly reveal some consistent patterns between projects. The short-term analysis will serve to isolate each significant release period as a cause-and-effect period (changes being the causes, and bugs being the effects).
@@ -105,7 +114,150 @@ Project historical data was analyzed as follows. First, for each period of analy
 The analysis results presented are broken up into subsections for long-term and short-term analysis. Following each will be interpretation of the results.
 
 \subsubsection{Long-term Analysis Results}
-TODO
+In this long-term analysis, data from all releases are put together for analysis. This set of data is then broken down into subgroups by type and priority.
+
+First, descriptive statistics are presented, which include frequency count, and the following summary statistics: minimum, 1st quartile, median (2nd quartile), 3rd quartile, mean, and maximum.
+
+\begin{table}[h!]
+\caption{Frequency of issues, by type and by priority}
+\centering
+\begin{tabular}{ r | c | c | c | c |  c | }
+\hline
+~ & \multicolumn{5}{|c|}{Priority} \\
+Type & 1 & 2 & 3 & 4 & 5 \\
+\hline\hline
+Bugs & 62 & 239 & 2759 & 484 & 87 \\
+Improvements & 1 & 28 & 1026 & 300 & 71 \\
+New Features & 1 & 3 & 229 & 46 & 7 \\
+Questions & 0 & 0 & 25 & 9 & 0 \\
+Tasks & 1 & 7 & 192 & 28 & 8 \\
+\hline
+\end{tabular}
+\label{tab:all_freqcount}
+\end{table}
+
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=6in]{exploratory_results/mongodb_allreleases/bugs}
+\caption{Descriptive statistics of bugs from all releases, by priority}
+\label{fig:all_bugs}
+\end{center}
+\end{figure}
+
+\begin{table}[h!]
+\caption{Summary statistics of bugs, by priority}
+\centering
+\begin{tabular}{ r | l | l | l | l |  l | l }
+\hline
+Priority & Min. & 1st Qu. & Median & Mean & 3rd Qu. & Max. \\
+\hline\hline
+1 & 0.00046 & 0.36710 & 2.01700 & 11.42000 & 7.10000 & 118.60000 \\
+2 & 0.0001 & 0.8911 & 4.6930 & 44.9600 & 24.8400 & 902.1000 \\
+3 & 0.0000 & 0.8247 & 6.1120 & 43.3000 & 30.1200 & 1365.0000 \\
+4 & 0.000 & 1.034 & 13.710 & 73.640 & 64.390 & 1300.000 \\
+5 & 0.0017 & 0.6199 & 4.8780 & 63.7800 & 54.4400 & 560.0000 \\
+\hline
+\end{tabular}
+\label{tab:all_bugs_summary}
+\end{table}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=6in]{exploratory_results/mongodb_allreleases/improvements}
+\caption{Descriptive statistics of improvements from all releases, by priority}
+\label{fig:all_improvements}
+\end{center}
+\end{figure}
+
+\begin{table}[h!]
+\caption{Summary statistics of improvements, by priority}
+\centering
+\begin{tabular}{ r | l | l | l | l |  l | l }
+\hline
+Priority & Min. & 1st Qu. & Median & Mean & 3rd Qu. & Max. \\
+\hline\hline
+1 & 14 & 14 & 14 & 14 & 14 & 14 \\
+2 & 0.0025 & 0.9847 & 27.8800 & 85.8900 & 92.8100 & 621.2000 \\
+3 & 0.000 & 2.869 & 19.840 & 101.700 & 97.250 & 1429.000 \\
+4 & 0.000 & 5.053 & 26.590 & 114.600 & 142.600 & 1380.000 \\
+5 & 0.0014 & 0.9455 & 6.7270 & 63.3000 & 57.1500 & 786.1000 \\
+\hline
+\end{tabular}
+\label{tab:all_improvements_summary}
+\end{table}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=6in]{exploratory_results/mongodb_allreleases/newfeatures}
+\caption{Descriptive statistics of new features from all releases, by priority}
+\label{fig:all_newfeatures}
+\end{center}
+\end{figure}
+
+\begin{table}[h!]
+\caption{Summary statistics of new features, by priority}
+\centering
+\begin{tabular}{ r | l | l | l | l |  l | l }
+\hline
+Priority & Min. & 1st Qu. & Median & Mean & 3rd Qu. & Max. \\
+\hline\hline
+1 & 50.65 & 50.65 & 50.65 & 50.65 & 50.65 & 50.65 \\
+2 & 40.95 & 77.54 & 114.10 & 158.20 & 216.90 & 319.60 \\
+3 & 0.0001 & 11.8200 & 52.0700 & 157.1000 & 183.2000 & 1287.0000 \\
+4 & 0.0001 & 6.0340 & 46.3200 & 260.1000 & 384.6000 & 1416.0000 \\
+5 & 0.01487 & 0.14220 & 5.81200 & 23.23000 & 18.37000 & 119.80000 \\
+\hline
+\end{tabular}
+\label{tab:all_newfeatures_summary}
+\end{table}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=6in]{exploratory_results/mongodb_allreleases/questions}
+\caption{Descriptive statistics of questions from all releases, by priority}
+\label{fig:all_questions}
+\end{center}
+\end{figure}
+
+\begin{table}[h!]
+\caption{Summary statistics of questions, by priority}
+\centering
+\begin{tabular}{ r | l | l | l | l |  l | l }
+\hline
+Priority & Min. & 1st Qu. & Median & Mean & 3rd Qu. & Max. \\
+\hline\hline
+3 & 0.0017 & 14.7200 & 26.3800 & 152.5000 & 72.1300 & 1106.0000 \\
+4 & 0.00009 & 0.01155 & 0.13950 & 54.83000 & 7.23100 & 271.80000 \\
+\hline
+\end{tabular}
+\label{tab:all_questions_summary}
+\end{table}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=6in]{exploratory_results/mongodb_allreleases/tasks}
+\caption{Descriptive statistics of tasks from all releases, by priority}
+\label{fig:all_tasks}
+\end{center}
+\end{figure}
+
+\begin{table}[h!]
+\caption{Summary statistics of tasks, by priority}
+\centering
+\begin{tabular}{ r | l | l | l | l |  l | l }
+\hline
+Priority & Min. & 1st Qu. & Median & Mean & 3rd Qu. & Max. \\
+\hline\hline
+1 & 71.02 & 71.02 & 71.02 & 71.02 & 71.02 & 71.02 \\
+2 & 3.453 & 33.510 & 67.560 & 121.100 & 85.820 & 537.800 \\
+3 & 0.0013 & 2.1460 & 12.2600 & 60.4400 & 53.6000 & 1436.0000 \\
+4 & 0.0315 & 2.6080 & 8.7250 & 84.0500 & 169.5000 & 368.8000 \\
+5 & 0.05017 & 3.11400 & 7.41800 & 23.31000 & 26.03000 & 107.10000 \\
+\hline
+\end{tabular}
+\label{tab:all_tasks_summary}
+\end{table}
 
 \subsubsection{Short-term Analysis Results}
 TODO
