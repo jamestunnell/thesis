@@ -17,12 +17,6 @@ from docopt import docopt
 args = docopt(__doc__)
 print("Running extract with args %s" % args)
 
-SEC_IN_DAY = float(24*60*60)
-def days_to_resolve(created, resolved):
-    time_delta = resolved - created
-    return time_delta.total_seconds() / SEC_IN_DAY
-
-
 from jira_xml import *
 from glob import glob
 
@@ -30,27 +24,32 @@ in_fnames = sorted(glob(args["INPUT_GLOB"]) )
 n = len(in_fnames)
 out_fname = args["OUTPUT_FILE"]
 
-header = ["type","priority","daystoresolve"]
-rows = []
+issues_by_key = {}
+issues_by_type = {}
+
+issues = []
 for i in range(n):
     in_fname = in_fnames[i]
     print("%03d / %03d | %s" % (i+1,n,in_fname))
-    
-    items = keep_closed(keep_fixed(load_items(in_fname)))
-    frows = []
-    for item in items:
-        row = []
-        
-        row.append(read_type(item))
-        row.append(read_priority(item))
-        
-        created, resolved = read_created(item), read_resolved(item)
-        days = days_to_resolve(created,resolved)
-        row.append(days)
-        
-        frows.append(row)
-        #[ [read_typeid(item), read_priorityid(item), read_statusid(item), read_resolutionid(item), read_fixversion(item), read_created(item), read_resolved(item)] for item in items ]
-    rows += frows
+    issues += load_issues(in_fname)
+issues = dict([[i.key,i] for i in issues])
+
+# for each sub-task, either: convert it plain issue of same type as parent, or 
+# toss it if parent can't be found
+
+# for tasks with sub-tasks: if it can be found, covert it to same type as parent
+for issue in issues.values():
+    for subtask_key in issue.subtasks:
+        if subtask_key in issues:
+            issues[subtask_key] = issues[subtask_key].reissue(issue.type)
+
+# remaining subtasks are tossed out
+for key, issue in issues.items():
+    if issue.type == TYPE_SUBTASK:
+        issues.pop(key)
+
+header = ["type","priority","daystoresolve"]
+rows = [ (i.type_str(), i.priority, i.days_to_resolve()) for i in issues.values() ]
 
 import csv
 with file(out_fname, 'wb') as csvfile:
