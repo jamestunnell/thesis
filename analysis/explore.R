@@ -5,8 +5,7 @@ may be from one release period or agreggated from multiple releases. Or, analysi
 on data from multiple releases, looking for trends across them.
 
 usage:
-explore.R single INFILE [options]
-explore.R multi INFILE ... [options]
+explore.R INFILE [options]
 
 arguments:
 INFILE A text file, containing CSV-like table
@@ -18,9 +17,12 @@ options:
 --log       Send text output to a log file
 ' -> doc
 
+library(rlist)
 library(docopt) # load the docopt library
-source("describe.R")
-source("fit.R")
+source("~/projects/thesis/analysis/describe.R")
+source("~/projects/thesis/analysis/examine.R")
+source("~/projects/thesis/common/util.R")
+source("~/projects/thesis/analysis/fit.R")
 
 opts <- docopt(doc) # retrieve the command-line arguments
 
@@ -34,19 +36,34 @@ if(opts$log){
 W <- as.integer(opts$width)
 H <- as.integer(opts$height)
 
-if(opts$single){
-  cat(paste0("Reading table from '", infile, "'..."))
-  data <- read.table(infile, header = TRUE, colClasses = c("factor","factor","numeric"))  
-  cat("done.\n")
-  
-  cat("Describing issue data...")
-  describe_issues(data,outdir,c(W,H))
-  cat("done.\n")
-  
-  cat("Fitting issue data...")
-  fit_issues(data,outdir,c(W,H))
-  cat("done.\n")
-}
+cat(paste0("Reading table from '", infile, "'..."))
+data <- readtable(infile)
+cat("done.\n")
+
+cat("Describing issue data...")
+describe_issues(data,outdir,c(W,H))
+cat("done.\n")
+
+cat("Fitting issue data...")
+fit_issues(data,outdir,c(W,H))
+cat("done.\n")
+
+cat("Examining issue data...")
+examine_issues(data,outdir, c(W,H))
+cat("done.\n")
+
+# releases <- split_by_release(data)
+#   datas <- list.map(infile, x ~ readtable(x))
+#   cat("done.\n")
+#   
+#   cat("Describing issue datas...")
+#   describe_issues_multi(datas,outdir,c(W,H))
+#   cat("done.\n")
+#   
+#   cat("Fitting issue datas...")
+#   #fit_issues_multi(datas, outdir, c(W,H))
+#   cat("done.\n")
+# }
 
 if(opts$log){
   warnings()

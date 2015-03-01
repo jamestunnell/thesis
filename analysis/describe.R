@@ -1,13 +1,13 @@
 describe_issues <- function(issue_data, outdir, image_size){
   W <- image_size[1]
   H <- image_size[2]
-  summary_file <- paste0(outdir,"/summary.txt")
+  summary_file <- paste0(outdir,"/describe.txt")
   cat("",file=summary_file)
   for(type in levels(issue_data$type)){
     priorities <- issue_data$priority[issue_data$type == type]    
     freqcounts <- table(priorities)
 
-    png(filename = paste0(outdir,"/",type,"s.png"), width=W, height=H)
+    png(filename = paste0(outdir,"/describe_",type,"s.png"), width=W, height=H)
     par(mfrow=c(1,2))
     
     xlab <- "Priority"; ylab <- "Count"
@@ -35,5 +35,27 @@ describe_issues <- function(issue_data, outdir, image_size){
         cat(c(title,out,""),file=summary_file,sep="\n",append=TRUE)
       }
     }
+  }
+}
+
+describe_issues_multi <- function(issue_datasets, outdir, image_size){
+  types = c("bug","newfeature","improvement")
+  counts <- hash()
+  totals <- hash(keys=types,values=rep(0,length=length(types)))
+  keys <- NULL
+  for(ds in issue_datasets){
+    for(type in c("bug","newfeature","improvement")){
+      key = type
+      keys <- append(keys,key)
+      count <- length(ds$daystoresolve[ds$type == type])
+      counts[[key]] <- append(counts[[key]], count)
+      totals[[key]] <- (totals[[key]] + count)
+    }
+  }
+  for(key in unique(keys)){
+    cat("Key: ", key, "\n")
+    png(filename = paste0(outdir,"/",key,"_multi_descr.png"), width=W, height=H)
+    hist(counts[[key]]/totals[[key]],main=paste0(key, " relative frequencies"))
+    dev.off()
   }
 }
