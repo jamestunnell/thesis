@@ -1,17 +1,41 @@
-THESIS_DIR <- "~/projects/thesis/"
-ISSUES_FILE = paste0(THESIS_DIR,"data/mongodb/issues.txt")
-OUTDIR = paste0(THESIS_DIR,"proposal/images/")
-PERIOD = 7
-ST_TYPE = "constant"
+#!/usr/bin/env Rscript
 
-require(dse)
-source(paste0(THESIS_DIR,"modeling/sampling.R"))
-source(paste0(THESIS_DIR,"modeling/testing.R"))
-source(paste0(THESIS_DIR,"modeling/modeling.R"))
-source(paste0(THESIS_DIR,"modeling/plotting.R"))
+'Model software defects using ARIMA time series model of historical data.
 
-issues <- read.table(ISSUES_FILE, header = T)
-s <- sample.issues.all(issues, PERIOD)
+usage:
+model.R ISSUES_FILE [options]
+
+arguments:
+ISSUES_FILE  A text file, containing CSV-like table, with software issue data.
+
+options:
+--srcdir=S  Path where modeling scripts are located [default: ./]
+--outdir=O  Path to a directory where plots can be saved as files [default: ./]
+--period=P  Sampling period, in days [default: 7]
+' -> doc
+
+library(docopt)
+opts <- docopt(doc) # retrieve the command-line arguments
+# opts <- list(
+#   ISSUES_FILE = "~/projects/thesis/data/mongodb/issues.txt",
+#   outdir = "~/projects/thesis/proposal/images/",
+#   srcdir = "~/projects/thesis/modeling/",
+#   period = "7"
+# )
+
+issues.file = opts$ISSUES_FILE
+sampling.period = as.integer(opts$period)
+src.dir <- opts$srcdir
+out.dir <- opts$outdir
+
+library(dse)
+source(paste0(src.dir,"sampling.R"))
+source(paste0(src.dir,"testing.R"))
+source(paste0(src.dir,"modeling.R"))
+source(paste0(src.dir,"plotting.R"))
+
+issues <- read.table(issues.file, header = T)
+s <- sample.issues.all(issues, sampling.period)
 
 bc <- s$bugs.created
 ir <- s$imps.resolved
@@ -25,10 +49,12 @@ cat("             Pre-Modeling\n")
 cat("=========================================\n\n")
 
 cat("Plotting time-series\n")
-fname <- paste0(OUTDIR, "time_series.png")
+fname <- paste0(out.dir, "time_series.png")
 plot.tseries(tseries, fname, diff = diff)
 
-fname <- paste0(OUTDIR, "stationarity.txt")
+ST_TYPE = "constant"
+
+fname <- paste0(out.dir, "stationarity.txt")
 cat("", file = fname, append = F)
 for(i in 1:length(tseries)){
   y <- tseries[[i]]
@@ -53,7 +79,7 @@ if(any(diff)){
     }
   }
   cat("Plotting differenced time-series\n")
-  fname <- paste0(OUTDIR, "time_series_diff.png")
+  fname <- paste0(out.dir, "time_series_diff.png")
   plot.tseries(tseries, fname, diff = diff)
   cat("\n")
 }
@@ -76,6 +102,6 @@ for(w in 1:n.windows){
   model <- modeling.methodology(ts)
   
   cat("Plotting one-step ahead predictions\n")
-  fname <- paste0(OUTDIR, s.min, "-", s.max, "_one-step_predictions.png")
+  fname <- paste0(out.dir, s.min, "-", s.max, "_one-step_predictions.png")
   plot.predictions(model, fname, diff[1], n.plots = 1, width = 1200, height.per = 400, cex = 1.35)
 }
