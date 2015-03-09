@@ -2,3 +2,7 @@
 .Rhistory
 .RData
 references
+doc/*.out
+doc/*.bbl
+doc/*.blg
+doc/*.log
