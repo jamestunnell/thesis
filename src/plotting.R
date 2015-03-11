@@ -5,7 +5,7 @@ ts.plot <- function(ts, fname, width = 800, height.each = 200, cex=1.5){
   for(i in 1:ncol(ts)){
     y <- as.vector(ts[,i])
     n <- length(y)
-    plot(time(ts), y, main=NULL, type="l", xlab = "time", ylab = names(ts)[i])
+    plot(time(ts), y, main=NULL, type="l", xlab = "", ylab = names(ts)[i])
   }
   
   dev.off()

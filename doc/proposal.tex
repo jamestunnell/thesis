@@ -45,9 +45,9 @@ The model is then applied to data from the \textit{MongoDB}\footnote{\href{https
 \section*{Motivation}
 \label{sec:motivation}
 
-When software releases are planned in the usual way, then it is reasonable to construct a statistical predictive model that depends only on previous defects occurrences. After all, planned features and improvements will probably be selected in the same manner for the next release as in previous releases. So why not assume that defect occurrences in the next release will occur in like manner as in previous releases?
+When software releases are planned in a way that is consistent with previous releases (in the same project), then it is reasonable to construct a statistical predictive model that depends only on previous defects occurrences. After all, planned features and improvements will probably be selected in a similar manner for the next release as they were in previous releases. So why not assume that defect occurrences in the next release will occur in like manner as in previous releases?
 
-This assumption makes sense under normal planning conditions. But what if release planners wished to put together multiple release plans, and predict defect occurrences for each? Surely the predicted number of defects should not be the same for all release plans. Yet this would be the case if the predictive model depended only on previous defect occurrences (Figure \ref{fig:use_non_explanatory_model} illustrates this limitation).
+This assumption makes sense under normal planning conditions, where planners are likely relying on their experience and on established conventions to arrive at a satisfactory set of requirements for an upcoming release. But what if release planners instead opt to employ a heuristic or optimization to make their decision? This would require the comparison of multiple hypothetical release plans. In this case, we would expect the predicted number of defects to not necessarily be the same for all release plans. Yet this would be the case if the predictive model depended only on previous defect occurrences (Figure \ref{fig:use_non_explanatory_model} illustrates this limitation).
 
 \begin{figure}[htbp!]
 \begin{center}
@@ -90,7 +90,7 @@ Release plan optimization is exactly the goal of The Next Release Problem (NRP),
 \subsubsection*{Defining the NRP}
 The Next Release Problem (NRP) was defined by Bagnall, Rayward-Smith, and Whittley\cite{2001_bagnall_nrp}, and was shown to be NP-Hard. Being abstract in its treatment of feature cost, a broad range of optimization techniques can be applied to the NRP, such as integer programming, hill climbing, simulated annealing, genetic algorithms, etc. The NRP is the subject of academic research in the area of Search-Based Software Engineering\cite{2010_jiang_hybrid,2012_xuan_solving,2007_zhang_multi_obj_nrp}.
 
-The NRP is designed to aid software project planners, who have multiple customers to satisfy. The project planner would like to maximize the revenue produced from completing the project. This is all described mathematically as follows.
+The NRP describes the situation where software project planners, who have multiple customers to satisfy, would like to maximize the revenue produced from completing the project. This is all described mathematically as follows.
 
 A software project has a set $R$ of all possible requirements (new features and enhancements) that might be included in the next software release. A customer $i$ is satisfied by completing a subset $R_i \subseteq R$. The importance of a customer $i$ is given by the weight, $w_i \in \mathbb{Z}^+$.
 
@@ -410,7 +410,7 @@ For a multivariate time series, stationarity holds if all the component univaria
 A time series that contains a stochastic trend is non-stationary. A pure auto-regressive (AR) model of such a time series contains a unit root\cite{franses1998time}. Testing for the presence of a unit root can therefore be used to test for non-stationarity. A unit-root test poses as the null hypothesis that an AR model has a unit root. Then, a test statistic is measured. If found to be significant, the null hypothesis cannot be rejected, and it is established that the time series has a stochastic trend and is therefore non-stationary. The augmented Dickey Fuller (ADF) test is often used for unit root testing.
 
 \subsubsection*{Stationarity Testing}
-On the other hand, a stationarity test uses the null hypothesis that a time series is stationary around a deterministic trend, with the alternative that  Then, if the test statistic shows that this hypothesis can be rejected, at some significance level, then a stochastic trend should be considered, by the unit root test. The Kwiatkowski–Phillips–Schmidt–Shin (KPSS) test can be applied for testing stationarity.
+On the other hand, a stationarity test uses the null hypothesis that a time series is stationary around a deterministic trend. If the test statistic shows that this hypothesis can be rejected, at some significance level, then a stochastic trend should be considered, by the unit root test. The Kwiatkowski–Phillips–Schmidt–Shin (KPSS) test can be applied for testing stationarity.
 
 \section*{Data Methodology}
 \label{sec:data_methodology}
@@ -600,7 +600,7 @@ After differencing we obtain the time series shown in figure \ref{fig:difference
 \end{table}
 
 \subsection*{Time Windowing}
-A 78-week time window (approximately 18 months) was established to restrict model scope. Three of these windowed periods, non-overlapping, were kept for modeling, and will be denoted $W_{1-78}$, $W_{79-156}$, and $W_{157-234}$.
+A 78-week time window (approximately 18 months) was established to restrict model scope. Three of these windowed periods, non-overlapping, were kept for modeling. Since the data is being differenced, the first sample (week) is skipped. These windowed periods are denoted $W_{2-79}$, $W_{80-157}$, and $W_{158-235}$.
 
 \subsection*{Time Series Model}
 
@@ -617,12 +617,12 @@ Models of order $1,2,...,p_{max}$ were estimated for later diagnostic checking.
 
 \subsection*{Model Diagnostic Checking}
 
-Candidate models were tested for stability and inadequacy. A $5\%$ significance level was used in the Ljung-Box test. The results for each windowed period are shown in table \ref{tab:diagnostic_results}. All model orders were stable for all windowed periods. Several model orders were found to be inadequate by the Ljung-Box test: orders 1-2 for period $W_{1-78}$, and order 5 for period $W_{157-234}$.
+Candidate models were tested for stability and inadequacy. A $5\%$ significance level was used in the Ljung-Box test. The results for each windowed period are shown in table \ref{tab:diagnostic_results}. All model orders were stable for all windowed periods. Several model orders were found to be inadequate by the Ljung-Box test: orders 1-2 for period $W_{2-79}$, and order 5 for period $W_{158-235}$.
 
 \begin{table}[h!]
   \centering
   \begin{tabular}{ c | r r | r r | r r }
-      & \multicolumn{2}{|c|}{$W_{1-78}$} & \multicolumn{2}{|c|}{$W_{79-156}$} & \multicolumn{2}{|c}{$W_{157-234}$} \\
+      & \multicolumn{2}{|c|}{$W_{2-79}$} & \multicolumn{2}{|c|}{$W_{80-157}$} & \multicolumn{2}{|c}{$W_{158-235}$} \\
     Model order & stable & p-value & stable & p-value & stable & p-value \\
     \hline
     1 & Yes & 0.009061 & Yes & 0.4478 & Yes & 0.09453 \\
@@ -638,13 +638,13 @@ Candidate models were tested for stability and inadequacy. A $5\%$ significance 
 \end{table}
 
 \subsection*{Model Selection}
-Models that were not rejected for instability or inadequacy were then compared and the best for each windowed period was selected by AIC selection criterion. The results of selection are shown in table \ref{tab:selection_results}, with orders 4, 1, and 1 being chosen for periods $W_{1-78}$, $W_{79-156}$, and $W_{157-234}$, respectively. The fit for each of these models is demonstrated by plotting one-step predictions along with actual values, shown for each model in figure \ref{fig:one_step_predictions}.
+Models that were not rejected for instability or inadequacy were then compared and the best for each windowed period was selected by AIC selection criterion. The results of selection are shown in table \ref{tab:selection_results}, with orders 4, 1, and 1 being chosen for periods $W_{2-79}$, $W_{80-157}$, and $W_{158-235}$, respectively. The fit for each of these models is demonstrated by plotting one-step predictions along with actual values, shown for each model in figure \ref{fig:one_step_predictions}.
 
 \begin{table}[h!]
   \centering
   \begin{tabular}{ c | r | r | r }
     ~ & \multicolumn{3}{|c}{AIC score} \\
-    Model order & $W_{1-78}$ & $W_{79-156}$ & $W_{157-234}$ \\
+    Model order & $W_{2-79}$ & $W_{80-157}$ & $W_{158-235}$ \\
     \hline
     1 & N/A & 429.8 & 477.9 \\
     2 & N/A & 439.3 & 482.4 \\
@@ -660,14 +660,14 @@ Models that were not rejected for instability or inadequacy were then compared a
 
 \begin{figure}
 \centering
-\subfloat[Windowed period $W_{1-78}$]{
-\includegraphics[width=\textwidth]{assets/1-78_one-step_predictions}
+\subfloat[Windowed period $W_{2-79}$]{
+\includegraphics[width=\textwidth]{assets/2-79_one-step_predictions}
 }\\
-\subfloat[Windowed period $W_{79-156}$]{
-\includegraphics[width=\textwidth]{assets/79-156_one-step_predictions}
+\subfloat[Windowed period $W_{80-157}$]{
+\includegraphics[width=\textwidth]{assets/80-157_one-step_predictions}
 }\\
-\subfloat[Windowed period $W_{157-234}$]{
-\includegraphics[width=\textwidth]{assets/157-234_one-step_predictions}
+\subfloat[Windowed period $W_{158-235}$]{
+\includegraphics[width=\textwidth]{assets/158-235_one-step_predictions}
 }%
 \caption{One-step predictions vs actual values, for each model selected by AIC score.}
 \label{fig:one_step_predictions}
