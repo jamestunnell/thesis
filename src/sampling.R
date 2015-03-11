@@ -1,4 +1,5 @@
 require(timeDate)
+require(xts)
 
 sample.issues.all <- function(issues, period){
   created <- timeDate(issues$created)
@@ -47,8 +48,7 @@ sample.issues.dateRange <- function(issues, startdate, enddate, period){
     dates <- append(dates,as.Date(l))
   }
   
-  df <- data.frame(list(date=dates,
-                        bugs.created=bugs.created, imps.resolved=imps.resolved,
-                        news.resolved=news.resolved, tsks.created=tsks.created))
-  return(df)
+  return(data.frame(bugs=bugs.created, imps=imps.resolved,
+                    news=news.resolved, tsks=tsks.created,
+                    date=dates))
 }

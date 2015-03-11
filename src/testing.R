@@ -49,9 +49,9 @@ test.stationarity <- function(x, type, df.level, kpss.level)
                         signif = kpss.signif, result = res.kpss)))
 }
 
-print.stationarity <- function(stationarity.results, series.name, fname, diff = T){
+print.stationarity <- function(stationarity.results, series.name, fname){
   s <- stationarity.results
-  cat("Stationarity of", series.name, if(diff){ "(differenced)" }, "\n", file = fname, append = T)
+  cat("Stationarity of", series.name, "\n", file = fname, append = T)
   cat("----------------------------------------------\n", file = fname, append = T)
   cat("Dickey Fuller test results:", file = fname, append = T)
   for(i in 1:ncol(s$df$statistic)){
