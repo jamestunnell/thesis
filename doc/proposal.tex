@@ -85,7 +85,7 @@ Instead, to support these \say{what-if} scenarios, a predictive model should dep
 \end{figure}
 
 \subsection*{Application to the Next Release Problem}
-Release plan optimization is exactly the goal of The Next Release Problem (NRP), but there is a gap between the abstract domain of the NRP and the detailed, messy data found in software projects. By applying a explanatory predictive model there is a path toward bridging this gap, opening up the potential for using NRP optimization techniques in real-world release planning. In this section, first the NRP is described, then the gap between it and practical planning is discussed, and finally it is shown how the explanatory model suggested earlier would be applied to help bridge this gap.
+Release plan optimization is exactly the goal of The Next Release Problem (NRP), but there is a gap between the abstract domain of the NRP and the detailed, messy data found in software projects. By applying an explanatory predictive model there is a path toward bridging this gap, opening up the potential for using NRP optimization techniques in real-world release planning. In this section, first the NRP is described, then the gap between it and practical planning is discussed, and finally it is shown how the explanatory model suggested earlier would be applied to help bridge this gap.
 
 \subsubsection*{Defining the NRP}
 The Next Release Problem (NRP) was defined by Bagnall, Rayward-Smith, and Whittley\cite{2001_bagnall_nrp}, and was shown to be NP-Hard. Being abstract in its treatment of feature cost, a broad range of optimization techniques can be applied to the NRP, such as integer programming, hill climbing, simulated annealing, genetic algorithms, etc. The NRP is the subject of academic research in the area of Search-Based Software Engineering\cite{2010_jiang_hybrid,2012_xuan_solving,2007_zhang_multi_obj_nrp}.
@@ -125,7 +125,7 @@ As was discussed in the previous section, a planner would need several things to
 \item{A set of requirements that could potentially be implemented.}
 \item{A set of customers that are satisfied by some subset of the requirements, and have an associated weight.}
 \item{A cost function, to quantify the cost of each requirement.}
-\item{A cost budget, that should not be exceeded.}
+\item{A cost budget that should not be exceeded.}
 \end{enumerate}
 
 Having all these in hand, a planner could proceed to optimize the subset of requirements planned for the next release. One difficulty with this that can be highlighted is in the definition of a cost function. It might be suggested that the estimated time to implement a requirement alone might be used to determine cost, but there is a practical detail that prevents this: in order to maintain quality software, the total cost of any requirement should take into consideration both the cost of implementation \emph{and} the cost of fixing associated defects. Otherwise, a release plan would appear to be within budget, when there is a risk that the budget will be exceeded when defect costs are also considered.
@@ -428,7 +428,7 @@ MongoDB uses \href{https://www.atlassian.com/software/jira}{JIRA}\footnote{JIRA 
 The following fields are kept from each issue: type, priority, creation date, resolution date.  Once extracted, the data is changed to text table format, suitable for reading in R\footnote{\href{http://www.r-project.org/}{R} is a popular software environment for statistical computing.}.
 
 \subsubsection*{Unfixed Issues}
-The proposed model structure assumes that bug creation can be explained by software changes. Therefore, issues that do not result in any change should not be included in the dataset. For this reason, only issues with resolution \say{fixed}, \say{complete}, or \say{done} will be kept. Other possible issue resolutions are: \say{unresolved}, \say{won't fix}, \say{duplicate}, etc. Fixed issues are predominant, so there is little risk in this decision. In the data used, $18$ ($0.26\%$) of the issues were unfixed. 
+The proposed model structure assumes that bug creation can be explained by software changes. Therefore, issues that do not result in any change should not be included in the dataset. For this reason, only issues with resolution \textit{fixed}, \textit{complete}, or \textit{done} will be kept. Other possible issue resolutions are: \textit{unresolved}, \textit{won't fix}, \textit{duplicate}, etc. In the data used, $18$ ($0.26\%$) of the issues were unfixed. 
 
 \subsubsection*{Sub-tasks}
 Issues that are sub-tasks are first converted to be the same type as the parent issue. Those sub-tasks whose parent issue is not in the dataset are considered orphans and discarded. There were $20$ ($0.28\%$) orphaned sub-tasks encountered in the dataset, so this decision is not expected to have much impact on the outcome.
@@ -481,10 +481,10 @@ Period & Improvements & New Features & Bugs \\
 \subsubsection*{Establishing Stationarity}
 To establish stationarity, we first need to see if we can rule out the presence of a stochastic trend by applying the augmented Dickey-Fuller (ADF) test. If we can indeed rule out a stochastic trend, we should be able to confirm stationarity by applying the KPSS test. Or, if a stochastic trend cannot be ruled out, then KPSS test should be applied to check that trend stationarity is also rejected. If data is found to be have a stochastic trend, it should be differenced and then retested to confirm (trend) stationarity.
 
-The the \textit{urca}\footnote{The \href{http://cran.r-project.org/web/packages/urca}{urca} library provides tests for time series data, and is freely available as a package for the \textit{R} computing environment.} library provides \texttt{ur.df} and \texttt{ur.kpss} functions for performing these test. In both tests, it will be assumed that the deterministic component is constant, with an intercept but no trend.
+The \textit{urca}\footnote{The \href{http://cran.r-project.org/web/packages/urca}{urca} library provides tests for time series data, and is freely available as a package for the \textit{R} computing environment.} library provides \texttt{ur.df} and \texttt{ur.kpss} functions for performing these test. In both tests, it will be assumed that the deterministic component is constant, with an intercept but no trend.
 
 \subsubsection*{Time Windowing}
-It is assumed that the SW development process underlying a given project may change over time. Rather than developing a model that also changes over time, the data will be kept for modeling only if it occurs within a time window. This will limit the amount of process change the model is exposed to. The time window should balance between more observations, to capture consistent long-term behaviors, and less observations, to limit exposure inconsistent short-term behaviors.
+It is assumed that the SW development process underlying a given project may change over time. Rather than developing a model that also changes over time, the data will be kept for modeling only if it occurs within a time window. This will limit the amount of process change the model is exposed to. The time window should balance between: more observations to capture consistent long-term behaviors, and less observations to limit exposure inconsistent short-term behaviors.
 
 Taking this approach means that the entire modeling methodology will be executed for each time-windowed part of the data. 
 
@@ -496,7 +496,7 @@ The typical methodology used for building time series models involves specificat
 \subsection*{Model Specification \& Estimation}
 Specification of VARX($p$) model is accomplished by choosing an order $p$, which is the number of autoregressive terms to include in the model. Once an order is specified, the model parameters can be estimated by a procedure such as least squares regression.  
 
-The model order will directly affect number of parameters included in the model. One goal of specification will be to avoid having too many parameters relative to the number of observations. The following derivation will lead to a simple rule for limiting the model order in this respect. First, let $n$ be the number of time samples in a time series. When their are $m$ time series, each sample contains $m$ observations, so there are $m n$ total observations for all time series. Next, for a VARX($p$) model of the $m$ time series variables, there are $m^2 p$ unknown parameters to be estimated. Let the ratio of observations to parameters be denoted by
+The model order will directly affect number of parameters included in the model. One goal of specification will be to avoid having too many parameters relative to the number of observations. The following derivation will lead to a simple rule for limiting the model order in this respect. First, let $n$ be the number of time samples in a time series. When there are $m$ time series, each sample contains $m$ observations, so there are $m n$ total observations for all time series. Next, for a VARX($p$) model of the $m$ time series variables, there are $m^2 p$ unknown parameters to be estimated. Let the ratio of observations to parameters be denoted by
 \begin{equation}
 K = \frac{m n}{m^2 p} = \frac{n}{m p}
 \end{equation}
@@ -536,7 +536,7 @@ Model selection criteria are used to compare models by their fit, to minimize re
 \begin{equation}
 AIC_{p,q}=ln{|\tilde{\mathbf{\Sigma}_r}|}+2r/n,
 \end{equation}
-where $n$ is the number of samples, $r$ is the number of parameters, and  $\tilde{\mathbf{\Sigma}_r}$ is the residual covariance matrix estimate. AICc and BIC are other well-known selection criteria. But, according to Bisgaard and Kulahci, \say{The penalty for introducing unnecessary parameters is more severe for BIC and AICC than for AIC}\cite{bisgaard2011time}. A less severe penalty for the number of parameters would be preferred in this case, since we are already limiting the number of parameters in the model specification step, and because additional parameters may in fact be necessary to account for time series autocorrelations with higher lags. Therefore, AIC will be used as the selection criterion.
+where $n$ is the number of samples, $r$ is the number of parameters, and  $\tilde{\mathbf{\Sigma}_r}$ is the residual covariance matrix estimate. AICc (AIC with correction) and BIC (Bayesian Information Criterion) are other well-known selection criteria. But, according to Bisgaard and Kulahci, \say{The penalty for introducing unnecessary parameters is more severe for BIC and AICC than for AIC}\cite{bisgaard2011time}. A less severe penalty for the number of parameters would be preferred in this case, since we are already limiting the number of parameters in the model specification step, and because additional parameters may in fact be necessary to account for time series autocorrelations with higher lags. Therefore, AIC will be used as the selection criterion.
 
 The \textit{dse} library provides the \texttt{bestTSestModel} function for performing model selection.
 
@@ -557,9 +557,7 @@ The MongoDB dataset was collected according to the methodology in the \nameref{s
 
 \subsection*{Stationarity Testing}
 
-Before modeling, the time series were all checked for stationarity. The result of the ADF unit root and KPSS stationarity tests are listed in tables \ref{tab:unit_root_results} and \ref{tab:stationarity_results}, respectively. Remember that for these tests, we need low significance for the unit root test and high significance for the stationarity test. This will allow us to reject the hypothesis that a time series has a unit root (is not stationary) and fail to reject the hypothesis that the time series is stationary. 
-
-The unit root tests showed less than $1\%$ significance for all time series. However, the stationarity test also showed low significance. Since there is disagreement in the test results, the time series will all be differenced and the tests re-run.
+Before modeling, the time series were all checked for stationarity. The result of the ADF unit root and KPSS stationarity tests are listed in Table \ref{tab:stationarity_results}. The unit root tests showed less than $1\%$ significance for all time series. However, the stationarity test also showed low significance, meaning we have evidence to reject the hypothesis of stability. Since there is disagreement in the test results, the time series are differenced and the tests re-run.
 
 \begin{table}[h!]
   \centering
@@ -567,29 +565,16 @@ The unit root tests showed less than $1\%$ significance for all time series. How
       & \multicolumn{2}{|c|}{$Y_{bug}$} & \multicolumn{2}{|c|}{$Y_{imp}$} & \multicolumn{2}{|c}{$Y_{new}$} \\
     Statistic & value & signif. & value & signif. & value & signif. \\
     \hline
-    $\tau_2$ & -5.0203 & $< 1\%$ & -7.4022 & $< 1\%$ & -7.8448 & $< 1\%$ \\
-    $\phi_1$ & 12.6505 & $< 1\%$ & 27.4154 & $< 1\%$ & 30.7709 & $< 1\%$ \\
+    ADF ($\tau_2$) & -5.0203 & $< 1\%$ & -7.4022 & $< 1\%$ & -7.8448 & $< 1\%$ \\
+    ADF ($\phi_1$) & 12.6505 & $< 1\%$ & 27.4154 & $< 1\%$ & 30.7709 & $< 1\%$ \\
+    KPSS & 2.8521 & $< 1\%$ & 2.0208 & $< 1\%$ & 0.5269 & $2.5-5\%$ \\
     \hline
   \end{tabular}
-\caption{Results of running the augmented Dickey-Fuller unit root test on $Y_{bug}$, $Y_{imp}$, and $Y_{new}$. The test is ran using an intercept-only regression model.}
-\label{tab:unit_root_results}
-\end{table}
-
-\begin{table}[h!]
-  \centering
-  \begin{tabular}{ c | r r }
-    Time series & statistic & signif. \\
-    \hline
-    $Y_{bug}$ & 2.8521 & $< 1\%$ \\
-    $Y_{imp}$ & 2.0208 & $< 1\%$ \\
-    $Y_{new}$ & 0.5269 & $2.5-5\%$ \\
-    \hline
-  \end{tabular}
-\caption{Results of running the KPSS stationarity test on $Y_{bug}$, $Y_{imp}$, and $Y_{new}$. The test is ran assuming a constant-only deterministic component.}
+\caption{Results of running the ADF unit root test and KPSS stationarity test on $Y_{bug}$, $Y_{imp}$, and $Y_{new}$. The tests are ran using an intercept-only regression model.}
 \label{tab:stationarity_results}
 \end{table}
 
-After differencing we obtain the time series shown in figure \ref{fig:differenced_time_series}, which will be referred to as $Y_{\bigtriangledown bug}$, $Y_{\bigtriangledown imp}$, and $Y_{\bigtriangledown new}$. Now, the result of the unit root and stationarity test (listed in tables \ref{tab:first_diff_unit_root_results} and \ref{tab:first_diff_stationarity_results}) both agree. That is, we can reject the hypothesis that a unit root is present at the $1\%$  significance level and we have significance to accept stationarity with greater than $10\%$ significance. Hence, the differenced time series will be used to move forward with modeling.
+After differencing we obtain the time series shown in figure \ref{fig:differenced_time_series}, which will be referred to as $Y_{\bigtriangledown bug}$, $Y_{\bigtriangledown imp}$, and $Y_{\bigtriangledown new}$. Now the result of the unit root and stationarity test (listed in Table \ref{tab:first_diff_stationarity_results}) both agree. That is, we can reject the hypothesis that a unit root (stochastic trend) is present at the $1\%$  significance level and we fail to reject the hypothesis of stationarity with greater than $10\%$ significance. Hence, the differenced time series will be used to move forward with modeling.
 
 \begin{figure}[htbp!]
 \begin{center}
@@ -605,25 +590,12 @@ After differencing we obtain the time series shown in figure \ref{fig:difference
       & \multicolumn{2}{|c|}{$Y_{\bigtriangledown bug}$} & \multicolumn{2}{|c|}{$Y_{\bigtriangledown imp}$} & \multicolumn{2}{|c}{$Y_{\bigtriangledown new}$} \\
     Statistic & value & signif. & value & signif. & value & signif. \\
     \hline
-    $\tau_2$ & -17.6529 & $< 1\%$ & -20.4382 & $< 1\%$ & -21.8989 & $< 1\%$ \\
-    $\phi_1$ & 155.8144 & $< 1\%$ & 208.8647 & $< 1\%$ & 239.7814 & $< 1\%$ \\
+    ADF ($\tau_2$) & -17.6529 & $< 1\%$ & -20.4382 & $< 1\%$ & -21.8989 & $< 1\%$ \\
+    ADF ($\phi_1$) & 155.8144 & $< 1\%$ & 208.8647 & $< 1\%$ & 239.7814 & $< 1\%$ \\
+    KPSS & 0.0115 & $> 10\%$ & 0.0127 & $> 10\%$ & 0.0127 & $> 10\%$ \\
     \hline
   \end{tabular}
-\caption{Results of running the augmented Dickey-Fuller unit root test on the differenced time series}
-\label{tab:first_diff_unit_root_results}
-\end{table}
-
-\begin{table}[h!]
-  \centering
-  \begin{tabular}{ c | r r }
-    Time series & statistic & signif. \\
-    \hline
-    $Y_{\bigtriangledown bug}$ & 0.0115 & $> 10\%$ \\
-    $Y_{\bigtriangledown imp}$ & 0.0127 & $> 10\%$ \\
-    $Y_{\bigtriangledown new}$ & 0.0127 & $> 10\%$ \\
-    \hline
-  \end{tabular}
-\caption{Results of running the KPSS stationarity test on the differenced time series}
+\caption{Results of running the ADF unit root test and KPSS stationarity test on the differenced time series}
 \label{tab:first_diff_stationarity_results}
 \end{table}
 
