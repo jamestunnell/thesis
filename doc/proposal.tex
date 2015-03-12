@@ -479,12 +479,12 @@ Period & Improvements & New Features & Bugs \\
 \end{table}
 
 \subsubsection*{Establishing Stationarity}
-To establish stationarity, we first need to see if we can rule out the presence of a stochastic trend by applying the augmented Dickey-Fuller (ADF) test. If we can indeed rule out a stochastic trend, we should be able to confirm stationarity by applying the KPSS test. Or, if a stochastic trend cannot be ruled out, then KPSS test should be applied to check that trend stationarity is also rejected. If data is found to be have a stochastic trend, it should be differenced and then retested to confirm (trend) stationarity.
+To establish stationarity, we first need to see if we can rule out the presence of a stochastic trend by applying the augmented Dickey-Fuller (ADF) test. If we can indeed rule out a stochastic trend, we should be able to confirm stationarity by applying the KPSS test. Or, if a stochastic trend cannot be ruled out, then KPSS test should be applied to check that trend stationarity is also rejected. If the data is found to have a stochastic trend, it should be differenced and then retested to confirm (trend) stationarity.
 
 The \textit{urca}\footnote{The \href{http://cran.r-project.org/web/packages/urca}{urca} library provides tests for time series data, and is freely available as a package for the \textit{R} computing environment.} library provides \texttt{ur.df} and \texttt{ur.kpss} functions for performing these test. In both tests, it will be assumed that the deterministic component is constant, with an intercept but no trend.
 
 \subsubsection*{Time Windowing}
-It is assumed that the SW development process underlying a given project may change over time. Rather than developing a model that also changes over time, the data will be kept for modeling only if it occurs within a time window. This will limit the amount of process change the model is exposed to. The time window should balance between: more observations to capture consistent long-term behaviors, and less observations to limit exposure inconsistent short-term behaviors.
+It is assumed that the software development process underlying a given project may change over time. Rather than developing a model that also changes over time, the data will be kept for modeling only if it occurs within a time window. This will limit the amount of process change the model is exposed to. The time window should balance between: more observations to capture consistent long-term behaviors, and fewer observations to limit exposure to inconsistent short-term behaviors.
 
 Taking this approach means that the entire modeling methodology will be executed for each time-windowed part of the data. 
 
@@ -494,9 +494,9 @@ Taking this approach means that the entire modeling methodology will be executed
 The typical methodology used for building time series models involves specification, estimation, and diagnostics checking\cite[p. 478]{box_jenkins_reinsel_2008}. Once specified and estimated, the diagnostic checking step ensures that only valid models are considered for selection. The final step of modeling would be selection, where models are compared by some model selection criterion\cite[pg. 581]{box_jenkins_reinsel_2008}.
 
 \subsection*{Model Specification \& Estimation}
-Specification of VARX($p$) model is accomplished by choosing an order $p$, which is the number of autoregressive terms to include in the model. Once an order is specified, the model parameters can be estimated by a procedure such as least squares regression.  
+Specification of a VARX($p$) model is accomplished by choosing an order $p$, which is the number of autoregressive terms to include in the model. Once an order is specified, the model parameters can be estimated by a procedure such as least squares regression.  
 
-The model order will directly affect number of parameters included in the model. One goal of specification will be to avoid having too many parameters relative to the number of observations. The following derivation will lead to a simple rule for limiting the model order in this respect. First, let $n$ be the number of time samples in a time series. When there are $m$ time series, each sample contains $m$ observations, so there are $m n$ total observations for all time series. Next, for a VARX($p$) model of the $m$ time series variables, there are $m^2 p$ unknown parameters to be estimated. Let the ratio of observations to parameters be denoted by
+The model order will directly affect the number of parameters included in the model. One goal of specification will be to avoid having too many parameters relative to the number of observations. The following derivation will lead to a simple rule for limiting the model order in this respect. First, let $n$ be the number of time samples in a time series. When there are $m$ time series, each sample contains $m$ observations, so there are $m n$ total observations for all time series. Next, for a VARX($p$) model of the $m$ time series variables, there are $m^2 p$ unknown parameters to be estimated. Let the ratio of observations to parameters be denoted by
 \begin{equation}
 K = \frac{m n}{m^2 p} = \frac{n}{m p}
 \end{equation}
@@ -518,7 +518,7 @@ p_{max} = \left \lfloor \frac{n}{m K_{min}} \right \rfloor
 
 With this upper bound, model specification will include the generation of models having order $1, 2,..., p_{max}$. These models, with their estimated parameters, will be candidates for final model selection after undergoing diagnostic checking.
 
-To estimating the parameters of a VARX model, the \textit{dse}\footnote{The \href{http://cran.r-project.org/web/packages/dse}{dse} library provides tools for time series models, and is freely available as a package for the \textit{R} computing environment.} library provides the \texttt{estVARXar} function.
+To estimate the parameters of a VARX model, the \textit{dse}\footnote{The \href{http://cran.r-project.org/web/packages/dse}{dse} library provides tools for time series models, and is freely available as a package for the \textit{R} computing environment.} library provides the \texttt{estVARXar} function.
 
 \subsection*{Diagnostics Checking}
 To verify that a model can be accepted, diagnostic checking is performed. Included in this step is testing for stability and for model inadequacy.
@@ -557,7 +557,7 @@ The \textit{MongoDB} dataset was collected according to the methodology in the \
 
 \subsection*{Stationarity Testing}
 
-Before modeling, the time series were all checked for stationarity. The result of the ADF unit root and KPSS stationarity tests are listed in Table \ref{tab:stationarity_results}. The unit root tests showed less than $1\%$ significance for all time series. However, the stationarity test also showed low significance, meaning we have evidence to reject the hypothesis of stability. Since there is disagreement in the test results, the time series are differenced and the tests re-run.
+Before modeling, the time series were all checked for stationarity. The result of the ADF unit root and KPSS stationarity tests are listed in Table \ref{tab:stationarity_results}. The unit root tests showed less than $1\%$ significance for all time series. However, the stationarity test also showed low significance, meaning we have evidence to reject the hypothesis of stability. Since there is disagreement in the test results, the time series are differenced and the tests rerun.
 
 \begin{table}[h!]
   \centering
@@ -716,7 +716,7 @@ Apply the model to hypothetical \say{release plans}, that is, predict future val
 Follow the same methodologies with two other SW projects.
 \end{enumerate}
 
-The time estimated to complete the proposed work is summarized in the timeline shown in table \ref{tab:timeline}.
+The time estimated to complete the proposed work is summarized in the timeline shown in Table \ref{tab:timeline}.
 
 \begin{table}[h]
 \centering
