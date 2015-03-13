@@ -17,9 +17,9 @@ options:
 library(docopt)
 # opts <- docopt(doc) # retrieve the command-line arguments
 opts <- list(
-  ISSUES_FILE = "C:/Users/James/thesis/data/mongodb/issues.txt",
-  outdir = "C:/Users/James/thesis/",
-  srcdir = "C:/Users/James/thesis/src/",
+  ISSUES_FILE = "~/projects/thesis/data/mongodb/issues.txt",
+  outdir = "~/projects/thesis/",
+  srcdir = "~/projects/thesis/src/",
   period = "7"
 )
 
@@ -30,11 +30,10 @@ out.dir <- normalizePath(opts$outdir)
 
 library(dse)
 library(xts)
-source(paste0(src.dir,"sampling.R"))
-source(paste0(src.dir,"testing.R"))
-source(paste0(src.dir,"modeling.R"))
-source(paste0(src.dir,"plotting.R"))
-source(paste0(src.dir,"tsdata.R"))
+source(paste0(src.dir,"/sampling.R"))
+source(paste0(src.dir,"/testing.R"))
+source(paste0(src.dir,"/modeling.R"))
+source(paste0(src.dir,"/plotting.R"))
 
 issues <- read.table(issues.file, header = T)
 s <- sample.issues.all(issues, sampling.period)
@@ -76,6 +75,14 @@ if(diff.any){
 
 n.sample.per <- 78
 n.windows <- floor(nrow(s) / n.sample.per)
+
+forecast.intervals <- function(model, ci){
+  alpha <- 1 - ci
+  z <- qnorm(1-alpha/2)
+  residuals <- (model$estimates$pred - model$data$output)
+  mse <- sum(residuals)^2 / length(residuals)
+  return(c(-z,z)*sqrt(mse))
+}
 
 for(w in 1:n.windows){
   s.min <- (w-1)*n.sample.per+1
