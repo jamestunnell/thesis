@@ -121,7 +121,10 @@ for(w in 1:n.windows){
 #   forecast.hypotheticals.mean3d(model, data.base=ts.data, fname=fname,
 #                                 imps.hypoth=imps.hypoth,news.hypoth=news.hypoth)
   
+  imps.actual <- ts[s.max+1,labs$imps]
+  news.actual <- ts[s.max+1,labs$news]
   fname <- file.path(out.dir, paste0("forecast_hypotheticals_conf2d_", s.min, "-", s.max, ".png"))
   forecast.hypotheticals.conf2d(model, data.base=ts.data, ci=0.8, fname=fname,
-                                imps.hypoth=imps.hypoth, news.hypoth=threepoints(news.hypoth))
+                                imps.actual=imps.actual, news.actual=news.actual,
+                                imps.hypoth=imps.hypoth, news.hypoth=news.hypoth)
 }

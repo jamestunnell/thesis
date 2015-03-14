@@ -51,8 +51,13 @@ forecast.intervals <- function(model, ci){
   return(c(-z,z)*sqrt(mse))
 }
 
+# Plot forecast (w/ confidence intervals) for different
+# hypothetical  values of nimps and nnews. Two side-by-side
+# plots are produced, one using hypothetical nimps and actual
+# nnews, and vice-versa.
 forecast.hypotheticals.conf2d <- function(
-  model.est, data.base, ci, imps.hypoth, news.hypoth, fname){
+  model.est, data.base, ci, fname,
+  imps.actual, news.actual, imps.hypoth, news.hypoth){
   
   data.ext <- ts.extend.one(data.base)
   row.last <- nrow(data.ext$input)
@@ -61,29 +66,43 @@ forecast.hypotheticals.conf2d <- function(
   d <- forecast.intervals(model, ci)
   
   nnews <- length(news.hypoth)
-  cols <- rainbow(nnews)
+  nimps <- length(imps.hypoth)
   
-  png(filename = fname, width=800, height=800)
-  plot(NULL, main=NULL, xlab="improvements", ylab="bugs",
-       xlim=range(imps.hypoth), ylim=range(data.base$output))
-  for(j in 1:nnews){
-    nr <- news.hypoth[j]
-    nimps <- length(imps.hypoth)
-    x <- imps.hypoth
-    y <- mat.or.vec(nimps,3)
-    for(i in 1:nimps){
-      ir <- x[i]
-      data.ext$input[row.last,c(labs$imps,labs$news)] <- c(ir,nr)
-      fc <- forecast(TSmodel(model.est), data.ext)
-      y_ <- fc$forecast[[1]][1,]
-      lohi <- y_ + d
-      y[i,1] <- lohi[1]
-      y[i,2] <- y_
-      y[i,3] <- lohi[2]
-    }
-    lines(x,y[,1], lty = 2, col = cols[j])
-    lines(x,y[,2], lty = 1, col = cols[j])
-    lines(x,y[,3], lty = 2, col = cols[j])
+  png(filename = fname, width=800, height=400)
+  par(mfrow=c(1,2))
+  
+  x <- imps.hypoth
+  y <- mat.or.vec(nimps,3)
+  for(i in 1:nimps){
+    data.ext$input[row.last,c(labs$imps,labs$news)] <- c(x[i],news.actual)
+    fc <- forecast(TSmodel(model.est), data.ext)
+    y_ <- fc$forecast[[1]][1,]
+    lohi <- y_ + d
+    y[i,1] <- lohi[1]
+    y[i,2] <- y_
+    y[i,3] <- lohi[2]
   }
+  plot(x,y[,2], type="l", ylim=range(y), xlab=labs$imps, ylab=labs$bugs,
+       main=paste(labs$news,"(actual) =",news.actual))
+  lines(x,y[,1], lty=2)
+  lines(x,y[,3], lty=2)
+  
+  x <- news.hypoth
+  y <- mat.or.vec(nnews,3)
+  for(i in 1:nnews){
+    data.ext$input[row.last,c(labs$imps,labs$news)] <- rev(c(x[i],imps.actual))
+    fc <- forecast(TSmodel(model.est), data.ext)
+    y_ <- fc$forecast[[1]][1,]
+    lohi <- y_ + d
+    y[i,1] <- lohi[1]
+    y[i,2] <- y_
+    y[i,3] <- lohi[2]
+  }
+  plot(x,y[,2], type="l", ylim=range(y), xlab=labs$news, ylab=labs$bugs,
+       main=paste(labs$imps,"(actual) =",imps.actual))
+  lines(x,y[,1], lty=2)
+  lines(x,y[,3], lty=2)
+  
   garbage <- dev.off()
+  par(mfrow=c(1,1))
 }
