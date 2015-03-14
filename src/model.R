@@ -34,7 +34,7 @@ source(paste0(src.dir,"sampling.R"))
 source(paste0(src.dir,"testing.R"))
 source(paste0(src.dir,"modeling.R"))
 source(paste0(src.dir,"plotting.R"))
-source(paste0(src.dir,"tsdata.R"))
+source(paste0(src.dir,"forecasting.R"))
 
 issues <- read.table(issues.file, header = T)
 s <- sample.issues.all(issues, sampling.period)
@@ -77,6 +77,19 @@ if(diff.any){
 n.sample.per <- 78
 n.windows <- floor(nrow(s) / n.sample.per)
 
+labs <- list(bugs = names(ts)[pmatch("Bug",names(ts))],
+             imps = names(ts)[pmatch("Imp",names(ts))],
+             news = names(ts)[pmatch("Fea",names(ts))])
+
+imps.hypoth = min(na.trim(ts[,labs$imps])):max(na.trim(ts[,labs$imps]))
+news.hypoth = min(na.trim(ts[,labs$news])):max(na.trim(ts[,labs$news]))
+
+threepoints <- function(x){
+  y <- sort(x)
+  n <- length(y)
+  return(c(y[1], y[floor(n/2)], y[n]))
+}
+
 for(w in 1:n.windows){
   s.min <- (w-1)*n.sample.per+1
   s.max <- w*n.sample.per
@@ -92,9 +105,6 @@ for(w in 1:n.windows){
   cat("        Modeling samples", s.min, "to", s.max, "\n")
   cat("=========================================\n\n")
   
-  labs <- list(bugs = names(ts)[pmatch("Bug",names(ts))],
-               imps = names(ts)[pmatch("Imp",names(ts))],
-               news = names(ts)[pmatch("Fea",names(ts))])
   ts.data <- TSdata(
     output = as.matrix(ts.sub[,labs$bugs]),
     input = as.matrix(ts.sub[,c(labs$imps,labs$news)])
@@ -102,13 +112,15 @@ for(w in 1:n.windows){
   model <- modeling.methodology(ts.data)
   
   cat("Plotting one-step ahead predictions\n")
-  fname <- paste0(out.dir, s.min, "-", s.max, "_one-step_predictions.png")
+  fname <- paste0(out.dir, "one-step_predictions_", s.min, "-", s.max, ".png")
   plot.predictions(model, s.range, fname, n.plots = 1, width = 1200, height.per = 400, cex = 1.35)
   
   cat("Forecasting for hypothetical future exogenous values (one-step only)\n")
-  # TODO
-  #    forecast.hypotheticals.onestep(model, , 
-  #      imps.hypoth = min(s$imps):max(s$imps), 
-  #      news.hypoth = min(s$news):max(s$news),
-  #      plot.2d = T)
+  fname <- paste0(out.dir, "forecast_hypotheticals_mean3d_", s.min, "-", s.max, ".png")
+  forecast.hypotheticals.mean3d(model, data.base=ts.data, fname=fname,
+                                imps.hypoth=imps.hypoth,news.hypoth=news.hypoth)
+  
+#   fname <- paste0(out.dir, "forecast_hypotheticals_conf2d_", s.min, "-", s.max, ".png")
+#   forecast.hypotheticals.conf2d(model, data.base=ts.data, fname=fname,
+#                                 imps.hypoth=imps.hypoth, news.hypoth=threepoints(news.hypoth))
 }
