@@ -43,6 +43,14 @@ forecast.hypotheticals.mean3d <- function(
   return(list(x=x,y=y,z=z))
 }
 
+forecast.intervals <- function(model, ci){
+  alpha <- 1 - ci
+  z <- qnorm(1-alpha/2)
+  residuals <- (model$estimates$pred - model$data$output)
+  mse <- sum(residuals)^2 / length(residuals)
+  return(c(-z,z)*sqrt(mse))
+}
+
 # forecast.hypotheticals.conf2d <- function(
 #   model.est, data.base, imps.hypoth, news.hypoth, fname){
 #   

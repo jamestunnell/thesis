@@ -17,24 +17,25 @@ options:
 library(docopt)
 # opts <- docopt(doc) # retrieve the command-line arguments
 opts <- list(
-  ISSUES_FILE = "C:/Users/James/thesis/data/mongodb/issues.txt",
-  outdir = "C:/Users/James/thesis/",
-  srcdir = "C:/Users/James/thesis/src/",
+  ISSUES_FILE = "~/../thesis/data/mongodb/issues.txt",
+  outdir = "~/../thesis",
+  srcdir = "~/../thesis/src",
   period = "7"
 )
 
 issues.file = opts$ISSUES_FILE
 sampling.period = as.integer(opts$period)
-src.dir <- normalizePath(opts$srcdir)
-out.dir <- normalizePath(opts$outdir)
+src.dir <- opts$srcdir
+out.dir <- opts$outdir
 
 library(dse)
 library(xts)
-source(paste0(src.dir,"sampling.R"))
-source(paste0(src.dir,"testing.R"))
-source(paste0(src.dir,"modeling.R"))
-source(paste0(src.dir,"plotting.R"))
-source(paste0(src.dir,"forecasting.R"))
+
+source(file.path(src.dir,"sampling.R"))
+source(file.path(src.dir,"testing.R"))
+source(file.path(src.dir,"modeling.R"))
+source(file.path(src.dir,"plotting.R"))
+source(file.path(src.dir,"forecasting.R"))
 
 issues <- read.table(issues.file, header = T)
 s <- sample.issues.all(issues, sampling.period)
@@ -45,12 +46,12 @@ cat("             Pre-Modeling\n")
 cat("=========================================\n\n")
 
 cat("Plotting time-series\n")
-fname <- paste0(out.dir, "time_series.png")
+fname <- file.path(out.dir, "time_series.png")
 ts.plot(ts, fname)
 
 ST_TYPE = "constant"
 
-fname <- paste0(out.dir, "stationarity.txt")
+fname <- file.path(out.dir, "stationarity.txt")
 cat("", file = fname, append = F)
 diff.any = F
 for(i in 1:ncol(ts)){
@@ -69,7 +70,7 @@ for(i in 1:ncol(ts)){
 if(diff.any){
   #ts <- ts[2:nrow(ts)]
   cat("Plotting differenced time-series\n")
-  fname <- paste0(out.dir, "time_series_diff.png")
+  fname <- file.path(out.dir, "time_series_diff.png")
   ts.plot(ts[2:nrow(ts)], fname)
   cat("\n")
 }
@@ -112,15 +113,15 @@ for(w in 1:n.windows){
   model <- modeling.methodology(ts.data)
   
   cat("Plotting one-step ahead predictions\n")
-  fname <- paste0(out.dir, "one-step_predictions_", s.min, "-", s.max, ".png")
+  fname <- file.path(out.dir, paste0("one-step_predictions_", s.min, "-", s.max, ".png"))
   plot.predictions(model, s.range, fname, n.plots = 1, width = 1200, height.per = 400, cex = 1.35)
   
   cat("Forecasting for hypothetical future exogenous values (one-step only)\n")
-  fname <- paste0(out.dir, "forecast_hypotheticals_mean3d_", s.min, "-", s.max, ".png")
+  fname <- file.path(out.dir, paste0("forecast_hypotheticals_mean3d_", s.min, "-", s.max, ".png"))
   forecast.hypotheticals.mean3d(model, data.base=ts.data, fname=fname,
                                 imps.hypoth=imps.hypoth,news.hypoth=news.hypoth)
   
-#   fname <- paste0(out.dir, "forecast_hypotheticals_conf2d_", s.min, "-", s.max, ".png")
+#   fname <- file.path(out.dir, "forecast_hypotheticals_conf2d_", s.min, "-", s.max, ".png")
 #   forecast.hypotheticals.conf2d(model, data.base=ts.data, fname=fname,
 #                                 imps.hypoth=imps.hypoth, news.hypoth=threepoints(news.hypoth))
 }
