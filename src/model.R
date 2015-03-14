@@ -116,12 +116,12 @@ for(w in 1:n.windows){
   fname <- file.path(out.dir, paste0("one-step_predictions_", s.min, "-", s.max, ".png"))
   plot.predictions(model, s.range, fname, n.plots = 1, width = 1200, height.per = 400, cex = 1.35)
   
-  cat("Forecasting for hypothetical future exogenous values (one-step only)\n")
-  fname <- file.path(out.dir, paste0("forecast_hypotheticals_mean3d_", s.min, "-", s.max, ".png"))
-  forecast.hypotheticals.mean3d(model, data.base=ts.data, fname=fname,
-                                imps.hypoth=imps.hypoth,news.hypoth=news.hypoth)
+#   cat("Forecasting for hypothetical future exogenous values (one-step only)\n")
+#   fname <- file.path(out.dir, paste0("forecast_hypotheticals_mean3d_", s.min, "-", s.max, ".png"))
+#   forecast.hypotheticals.mean3d(model, data.base=ts.data, fname=fname,
+#                                 imps.hypoth=imps.hypoth,news.hypoth=news.hypoth)
   
-#   fname <- file.path(out.dir, "forecast_hypotheticals_conf2d_", s.min, "-", s.max, ".png")
-#   forecast.hypotheticals.conf2d(model, data.base=ts.data, fname=fname,
-#                                 imps.hypoth=imps.hypoth, news.hypoth=threepoints(news.hypoth))
+  fname <- file.path(out.dir, paste0("forecast_hypotheticals_conf2d_", s.min, "-", s.max, ".png"))
+  forecast.hypotheticals.conf2d(model, data.base=ts.data, ci=0.8, fname=fname,
+                                imps.hypoth=imps.hypoth, news.hypoth=threepoints(news.hypoth))
 }
