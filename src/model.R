@@ -79,7 +79,7 @@ if(needs.diffed){
   cat("\n")
 }
 
-n.sample.per <- 78
+n.sample.per <- 52
 n.windows <- floor(nrow(s) / n.sample.per)
 
 labs <- list(bugs = names(ts)[pmatch("Bug",names(ts))],
@@ -120,7 +120,7 @@ for(w in 1:n.windows){
     imps.hypoth <- imps.hypoth - s$imps[s.max]
     news.hypoth <- news.hypoth - s$news[s.max]
   }
-  results <- forecast.hypotheticals(model, ts.data, ci=c(0.5,0.75,0.9),
+  results <- forecast.hypotheticals(model, ts.data, ci=c(0.75,0.9),
                          imps.hypoth=imps.hypoth, news.hypoth=news.hypoth)
   x <- results$x; y <- results$y; z <- results$z
   if(diffed){
