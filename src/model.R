@@ -53,22 +53,26 @@ ST_TYPE = "constant"
 
 fname <- file.path(out.dir, "stationarity.txt")
 cat("", file = fname, append = F)
-diff.any = F
+needs.diffed = F
 for(i in 1:ncol(ts)){
   st <- test.stationarity(ts[,i], type = ST_TYPE, df.level = 1, kpss.level = 10)
   print.stationarity(st, names(ts)[i], fname)
   if(!st$df$stationary | !st$kpss$stationary){
-    diff.any <- T
+    needs.diffed <- T
+  }
+}
+
+diffed = F
+if(needs.diffed){
+  diffed = T
+  for(i in 1:ncol(ts)){
     ts[,i] <- diff(ts[,i])
     names(ts)[i] <- paste(names(ts)[i],"(Difference)")
     st <- test.stationarity(ts[2:nrow(ts),i], type = ST_TYPE, df.level = 1, kpss.level = 10)
     print.stationarity(st, names(ts)[i], fname)
     stopifnot(st$df$stationary & st$kpss$stationary)
   }
-}
 
-if(diff.any){
-  #ts <- ts[2:nrow(ts)]
   cat("Plotting differenced time-series\n")
   fname <- file.path(out.dir, "time_series_diff.png")
   ts.plot(ts[2:nrow(ts)], fname)
@@ -82,19 +86,10 @@ labs <- list(bugs = names(ts)[pmatch("Bug",names(ts))],
              imps = names(ts)[pmatch("Imp",names(ts))],
              news = names(ts)[pmatch("Fea",names(ts))])
 
-imps.hypoth = min(na.trim(ts[,labs$imps])):max(na.trim(ts[,labs$imps]))
-news.hypoth = min(na.trim(ts[,labs$news])):max(na.trim(ts[,labs$news]))
-
-threepoints <- function(x){
-  y <- sort(x)
-  n <- length(y)
-  return(c(y[1], y[floor(n/2)], y[n]))
-}
-
 for(w in 1:n.windows){
   s.min <- (w-1)*n.sample.per+1
   s.max <- w*n.sample.per
-  if(diff.any){
+  if(diffed){
     s.min <- s.min+1
     s.max <- s.max+1
   }
@@ -115,16 +110,47 @@ for(w in 1:n.windows){
   cat("Plotting one-step ahead predictions\n")
   fname <- file.path(out.dir, paste0("one-step_predictions_", s.min, "-", s.max, ".png"))
   plot.predictions(model, s.range, fname, n.plots = 1, width = 1200, height.per = 400, cex = 1.35)
+
+  # Used for hypothetical forecasting. Not differenced values!
+  # They will be converted if needed
+  imps.hypoth <- seq(from = 0, to = 15, by = 3)
+  news.hypoth <- seq(from = 0, to = 6, by = 2)
   
-#   cat("Forecasting for hypothetical future exogenous values (one-step only)\n")
-#   fname <- file.path(out.dir, paste0("forecast_hypotheticals_mean3d_", s.min, "-", s.max, ".png"))
-#   forecast.hypotheticals.mean3d(model, data.base=ts.data, fname=fname,
-#                                 imps.hypoth=imps.hypoth,news.hypoth=news.hypoth)
+  if(diffed){
+    imps.hypoth <- imps.hypoth - s$imps[s.max]
+    news.hypoth <- news.hypoth - s$news[s.max]
+  }
+  results <- forecast.hypotheticals(model, ts.data, ci=c(0.5,0.75,0.9),
+                         imps.hypoth=imps.hypoth, news.hypoth=news.hypoth)
+  x <- results$x; y <- results$y; z <- results$z
+  if(diffed){
+    x <- x + s$imps[s.max]
+    y <- y + s$news[s.max]
+    z <- z + s$bugs[s.max]
+  }
   
-  imps.actual <- ts[s.max+1,labs$imps]
-  news.actual <- ts[s.max+1,labs$news]
-  fname <- file.path(out.dir, paste0("forecast_hypotheticals_conf2d_", s.min, "-", s.max, ".png"))
-  forecast.hypotheticals.conf2d(model, data.base=ts.data, ci=0.8, fname=fname,
-                                imps.actual=imps.actual, news.actual=news.actual,
-                                imps.hypoth=imps.hypoth, news.hypoth=news.hypoth)
+  library(onion)
+  fname <- file.path(out.dir, paste0("forecast_hypotheticals_mean3d_", s.min, "-", s.max, ".png"))
+  png(filename = fname, width=800, height=800)
+  p3d(x=x,y=y,z=z[,"mean"],d0 = 1,
+      xlab="Improvements", ylab="Features", zlab="Bugs",
+      theta = -120, phi=20, ticktype = "detailed")
+  garbage <- dev.off()
+  
+  fname <- file.path(out.dir, paste0("forecast_hypotheticals", s.min, "-", s.max, ".csv"))
+  forecasts <- data.frame(imps=x, news= y)
+  for(cname in colnames(z)){
+    forecasts[[cname]] <- z[,cname]
+  }
+  write.table(forecasts, file = fname, row.names = F, sep = ",")
+  
+# #   cat("Forecasting for hypothetical future exogenous values (one-step only)\n")
+# #   fname <- file.path(out.dir, paste0("forecast_hypotheticals_mean3d_", s.min, "-", s.max, ".png"))
+# #   forecast.hypotheticals.mean3d(model, data.base=ts.data, fname=fname,
+# #                                 imps.hypoth=imps.hypoth,news.hypoth=news.hypoth)
+# 
+# 
+#   fname <- file.path(out.dir, paste0("forecast_hypotheticals_", s.min, "-", s.max, ".png"))
+#   forecast.hypotheticals(model, data.base=ts.data, ci=c(0.5,0.75,0.9), fname=fname,
+#                         imps.hypoth=imps.hypoth, news.hypoth=news.hypoth)
 }
