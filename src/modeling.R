@@ -1,19 +1,26 @@
-est.models <- function(ts.data, max.order){
-  cat("Estimating models up to order", max.order)
+est.models <- function(ts.data, max.order, verbose = F){
+  if(verbose){
+    cat("Estimating models up to order", max.order)
+  }
   models <- list()
   
   for(p in 1:max.order){
     models[[p]] <- estVARXar(ts.data, max.lag = p, aic = F)
-    cat(".")
+    if(verbose){
+      cat(".")
+    }
   }
-  cat("\n")
+  if(verbose){
+    cat("\n")
+  }
   return(models)
 }
 
-check.models <- function(models, box.level){
-  cat("Checking models for stability and adequacy\n\n")
-  
-  cat("order\tstable\tBox-Ljung p-val\n")
+check.models <- function(models, box.level, verbose = F){
+  if(verbose){
+    cat("Checking models for stability and adequacy\n\n")
+    cat("order\tstable\tBox-Ljung p-val\n")
+  }
   unstable.orders <- NULL
   inadequate.orders <- NULL
   not.bad.models <- list()
@@ -32,7 +39,9 @@ check.models <- function(models, box.level){
     #     plot(a)
     
     lb.test <- Box.test(residuals, type="Ljung-Box", fitdf = p, lag = max.lag)
-    cat(p,"\t",stab[[1]],"\t",lb.test$p.value,"\n")
+    if(verbose){
+      cat(p,"\t",stab[[1]],"\t",lb.test$p.value,"\n")
+    }
     
     if(stab[[1]] & (lb.test$p.value >= box.level)){
       not.bad.models[[as.character(p)]] <- model
@@ -50,22 +59,23 @@ check.models <- function(models, box.level){
   #   garbage <- dev.off()
   #   par(mfrow=c(1,1))
   
-  if(any(unstable.orders)){
-    cat("Unstable model orders:", paste(unstable.orders,collapse = ", "), "\n")
-  } else {
-    cat("No model orders are unstable\n")
-  }
-  
-  if(any(inadequate.orders)){
-    cat("Inadequate model orders:", paste(inadequate.orders,collapse = ", "), "\n")
-  } else {
-    cat("No model orders are inadequate\n")
-  }
-  
+  if(verbose){
+    if(any(unstable.orders)){
+      cat("Unstable model orders:", paste(unstable.orders,collapse = ", "), "\n")
+    } else {
+      cat("No model orders are unstable\n")
+    }
+    
+    if(any(inadequate.orders)){
+      cat("Inadequate model orders:", paste(inadequate.orders,collapse = ", "), "\n")
+    } else {
+      cat("No model orders are inadequate\n")
+    }
+  }  
   return(not.bad.models)
 }
 
-modeling.methodology <- function(ts.data){
+modeling.methodology <- function(ts.data, verbose = F){
   
   # Model specification
   K_min = 4
@@ -74,14 +84,23 @@ modeling.methodology <- function(ts.data){
   p.max = floor(n/(m*K_min))
   
   # Model estimation
-  models <- est.models(ts.data, p.max)
+  models <- est.models(ts.data, p.max, verbose = verbose)
   
   # Model diagnostic checking
-  not.bad.models <- check.models(models, box.level = 0.05)
+  not.bad.models <- check.models(models, box.level = 0.05, verbose = verbose)
   
   # Model selection
-  cat("Selecting best model by AIC\n")
-  model <- bestTSestModel(not.bad.models, criterion = "aic")
-  cat("Selected model with order", nrow(model$model$A)-1, "\n")
+  if(length(not.bad.models) == 0){
+    return(NULL)
+  }
+  
+  if(verbose){
+    cat("Selecting best model by AIC\n")
+  }
+  out <- capture.output(model <- bestTSestModel(not.bad.models, criterion = "aic"))
+  if(verbose){
+    cat(out)
+    cat("Selected model with order", nrow(model$model$A)-1, "\n")
+  }
   return(model)
 }
