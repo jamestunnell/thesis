@@ -79,9 +79,9 @@ if(needs.diffed){
 #   cat("\n")
 }
 
-w.size <- 120
+w.size <- 78
 #n.windows <- floor(nrow(s) / w.size)
-ci <- c(0.975,0.95,0.9,0.8,0.75,0.5)
+ci <- c(0.9,0.75)
 
 labs <- list(bugs = names(ts)[pmatch("Bug",names(ts))],
              imps = names(ts)[pmatch("Imp",names(ts))],
