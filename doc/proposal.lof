@@ -1,0 +1,10 @@
+\contentsline {figure}{\numberline {1}{\ignorespaces An explanatory model}}{7}{figure.caption.4}
+\contentsline {figure}{\numberline {2}{\ignorespaces Overall cost of requirements}}{11}{figure.caption.5}
+\contentsline {figure}{\numberline {3}{\ignorespaces Sampling issue data}}{16}{figure.caption.6}
+\contentsline {figure}{\numberline {4}{\ignorespaces Time series data}}{20}{figure.caption.8}
+\contentsline {figure}{\numberline {5}{\ignorespaces Differenced time series}}{22}{figure.caption.10}
+\contentsline {figure}{\numberline {6}{\ignorespaces One-step predictions}}{25}{figure.caption.14}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Windowed period $W_{2-79}$}}}{25}{subfigure.6.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Windowed period $W_{80-157}$}}}{25}{subfigure.6.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Windowed period $W_{158-235}$}}}{25}{subfigure.6.3}
+\contentsline {figure}{\numberline {7}{\ignorespaces Forecast errors}}{27}{figure.caption.16}

@@ -20,55 +20,63 @@
  
 \begin{document}
 
+
 \title{Using Time Series Models for Defect Prediction in Software Release Planning}
 \subtitle{Thesis Proposal}
 \author{James Tunnell}
 \maketitle
 
 \begin{abstract}
-To produce a high-quality software release, sufficient time should be allowed for testing and fixing defects. Otherwise, there is a risk of slip in the schedule and/or quality. A time series model is used to predict the number of bugs created during development. The model depends on the previous numbers of bugs created. The model also depends, in an exogenous manner, on the previous numbers of new features resolved and improvements resolved. This model structure would allow hypothetical release plans to be compared by assessing their predicted impact on testing and defect-fixing time. The VARX time series model was selected as a reasonable approach. The accuracy of the model appeared low for a single dataset, but the
-error was found to be normally distributed.
-
+To produce a high-quality software release, sufficient time should be allowed for testing and fixing defects. Otherwise, there is a risk of slip in the development schedule and/or software quality. A time series model is used to predict the number of bugs created during development. The model depends on the previous numbers of bugs created. The model also depends, in an exogenous manner, on the previous numbers of new features resolved and improvements resolved. This model structure would allow hypothetical release plans to be compared by assessing their predicted impact on testing and defect-fixing time. The VARX time series model was selected as a reasonable approach. The accuracy of the model appeared low for a single dataset, but the error was found to be normally distributed.
 \end{abstract}
 
-\section*{Introduction}
-In software release planning there are two primary concerns: functionality and quality. To improve functionality and maintain high quality are the common objectives. Both objectives are constrained by limits on development time and cost. In order to respect these constraints and still pursue both objectives, the scope of planned work must be limited, so that time is available to properly deal with the inevitable defects (bugs) that will arise. Thus, a high quality of software can be ensured while also improving functionality.
+\pagebreak
+\setcounter{tocdepth}{2}
+\tableofcontents
 
-A critical step in this planning process is to factor in a suitable amount of time for testing and bug-fixing. Otherwise, there is a risk of schedule or quality slip. Since the time required for testing and bug-fixing will likely be a function of the number of defects introduced during development, it would be desirable to have a technique for predicting how many bugs can be expected as development proceeds.
+\listoffigures
+\listoftables
 
-Many software defect prediction techniques rely on code analysis. Other techniques rely on statistical modeling using empirical time series data. Both approaches are discussed in the \nameref{sec:related_work} section. In this paper, a time series method is used (see the \nameref{sec:time_series_modeling} section).
+\pagebreak
+\section{Introduction}
+Two primary concerns in software release planning are: improving functionality and maintaining quality. Both objectives are constrained by limits on development time and cost. In order to respect these constraints and still pursue both objectives, the scope of planned work must be limited so that time is available to properly deal with the inevitable defects (bugs) that will arise. In this way, a software release can better ensure quality while also improving functionality.
 
-One potential application of a defect prediction model is for comparing different release plans, to see how much bug fallout would likely result. This would help planners compare release plans to ensure that total development time does not exceed the time budget. The comparison of different plans is integral to release planning optimization, which is the focus of The Next Release Problem, a key problem in Search-Based Software Engineering (SBSE). This application of prediction models is discussed in the \nameref{sec:motivation} section.
+A critical step in this planning process is to factor in a suitable amount of time for testing and bug-fixing. Otherwise, there is a risk of slip in the development schedule and/or software quality. As the time and effort required for testing and bug-fixing will likely be a function of the number of defects introduced during development, it is desirable to be able to predict how many bugs can be expected as development proceeds.
 
-To make the defect prediction model useful for comparing release plans, the model must be dependent in some way on the basic elements of the release plan: planned new features and improvements. The statistical models discussed in the \nameref{sec:related_work} section are limited in this respect, as they depend only on the past defects. For this reason, it is proposed that for this application, a model be used that depends both on past defects and on planned features and improvements. Specifically, use of a multivariate time series model that includes exogenous inputs. Such a model is presented in the \nameref{sec:time_series_modeling} section.
+A potential application for defect prediction is to compare different release plans according to their estimated bug fallout and subsequent impact on testing and bug-fixing times. This would assist release planners in ensuring that the total development time does not exceed the project’s time budget for a release. The comparison of different release plans is integral to release plan optimization, which is the focus of The Next Release Problem (discussed in detail in the \nameref{sec:motivation} section).
 
-The model is then applied to data from the \textit{MongoDB}\footnote{\href{https://www.mongodb.org}{\textit{MongoDB}} is a document-oriented, NoSQL database, and is available under the \href{https://gnu.org/licenses/agpl.html}{GNU Affero GPL} license.} software project, to see which model order is selected and how well it predict defects. The results of this are shown in the \nameref{sec:results} section. Additional work is then proposed in the \nameref{sec:proposed_work} section.
+Many approaches to defect prediction focus on either code analysis or historical defect information. To make the defect prediction model useful for comparing release plans, the model must be dependent in some way on the basic elements of the release plan: planned new features and improvements. The historical defect models discussed in the \nameref{sec:related_work} section are limited in this respect, as they depend only on the past defects. 
 
-\section*{Motivation}
+An approach to defect prediction is presented using a multivariate time series model. This model can be applied for a proposed release, because predictions can be made using only information about proposed features and improvements.
+
+The paper is organized as follows. First, related work is presented in Section \ref{sec:related_work}. Then, Further motivation for the use of a time series model for predicting defects is presented in Section \ref{sec:motivation}. Next, an overview of time series modeling concepts is provided in Section \ref{sec:time_series_modeling}. Methodologies for data collection and time series modeling are detailed in Sections \ref{sec:data_methodology} and \ref{sec:modeling_methodology}, respectively. The results of applying these methodologies are given in Section \ref{sec:results}.  Last, the paper concludes and poses future work in Section \ref{sec:conclusions}.
+
+\section{Related Work}
+\label{sec:related_work}
+
+Software defect (bug) prediction typically involves a detailed analysis of code or proposed design changes. Some of these analytical methods are mentioned next. Then several statistical approaches to prediction are discussed.
+
+Akiyama \cite{1971_akiyama} predicted defect counts based on lines of code (LOC), number of decisions, and the number of subroutine calls. Gafney \cite{1984_gaffney_estimating} likewise predicted defect count based on LOC. Rather than code itself, Henry and Kafura \cite{1984_henry_evaluation} define metrics that are based on information taken from design documents, to be used in defect prediction. Nagappan and Ball \cite{2005_nagappan_codechurn} use relative code churn (lines modified) as a metric for predicting the density of defects. Giger, Pinzger, and Gall \cite{2011_giger_finegrained} compare the use of code churn to a more fined-grained approach, capturing \say{the exact code changes and their semantics down to statement level.}
+
+\subsection{Statistical Approaches to Defect Prediction}
+Rather than requiring a detailed code analysis to predict defects, the approach proposed in this paper is to develop a mathematical model based on historical data on defect occurrences. Specifically, the proposed approach is to develop a defect prediction model using previous software features, improvements, and defects.
+
+A related approach, used by Li, Shaw, Herbsleb, Ray, and Santhanam\cite{2004_li_emperical_eval}, is to study only the defect occurrences themselves, and attempt to develop a mathematical model for defect projection. In their work, functions were fitted to a time series of defect occurrences, then the function parameters themselves were extrapolated for each new release. They found that the Weibull model fit best in 73\% of the tested software releases. They attempted to extrapolate model parameters using naive methods, moving averages, and exponential smoothing, but found these techniques to be \say{...inadequate in extrapolating model parameters of the Weibull model for defect-occurrence projection}. The reason given for this ineffectiveness is the changing nature of the software development system. For example, development practices, staffing levels, and usage patterns may all change between releases.
+
+In another related approach, Graves, Karr, Marron, and Siy\cite{2000_graves_predicting} developed several models that predict the future distribution of software faults in a given code module. The basis of their predictive models is a statistical analysis of change management data, which describes only the changes made to code files. The best model they found was a weighted time damping model, where every change in the module files contributed to fault prediction, with time-damping to account for age of changes. They achieved \say{slightly less successful performance} by basing a generalized linear model on just the modules age and the number of past changes. They also found factors that did not improve model performance: module length, number of developers making changes in the module, and how often a module is changed simultaneously with another module.
+
+In the final approach discussed here, by Singh, Abbas, Ahmad, and Ramaswamy\cite{2010_singh_predicting}, the Box-Jenkins method is applied to datasets from the \textit{Eclipse} and \textit{Mozilla} software projects, which are represented as time series data, and defect count is predicted using an ARIMA model. Their modeling effort is focused at the component-level, and they conclude that \say{current bug count of a component is linearly related to its previous bug count}.
+
+\section{Motivation}
 \label{sec:motivation}
 
-When software releases are planned in a way that is consistent with previous releases (in the same project), then it is reasonable to construct a statistical predictive model that depends only on previous defects occurrences. After all, planned features and improvements will probably be selected in a similar manner for the next release as they were in previous releases. So why not assume that defect occurrences in the next release will occur in like manner as in previous releases?
+Release planners typically rely on both their experience and project conventions to generate a release plan by selecting planned features and improvements such that the estimated time to test for and fix defects will not cause a schedule slip.
 
-This assumption makes sense under normal planning conditions, where planners are likely relying on their experience and on established conventions to arrive at a satisfactory set of requirements for an upcoming release. But what if release planners instead opt to employ a heuristic or optimization to make their decision? This would require the comparison of multiple hypothetical release plans. In this case, we would expect the predicted number of defects to not necessarily be the same for all release plans. Yet this would be the case if the predictive model depended only on previous defect occurrences (Figure \ref{fig:use_non_explanatory_model} illustrates this limitation).
+However, if the defect estimation technique is only loosely based on past experience, as with a rule-of-thumb, then it may prove too coarse for comparing multiple release plans. Specifically, such a technique may not provide any quantitative difference between release plans that are similar (but not the same). For example, suppose two different release plans are being considered. Both include two features, but one has five improvements and the other has seven. A rule-of-thumb approach may provide the same estimate for each. Even for dissimilar release plans, such an approach still has the disadvantage of lacking confidence intervals to quantify prediction uncertainty.
 
-\begin{figure}[htbp!]
-\begin{center}
-\tikz[nodes={text height=1em, text depth=.2em, draw=black!20, thick, fill=white, font=\large}, rounded corners, semithick]
-  \graph[layered layout, level distance = 1cm, sibling sep = 1em]{
-    "Release Plan 1" -> "Non-explanatory Model";
-    "Release Plan 2" -> "Non-explanatory Model";
-    "..." -> "Non-explanatory Model";
-    "Release Plan N" -> "Non-explanatory Model";
-    "Non-explanatory Model" -> "Predicted Defects";
-  };
-\caption{Using a non-explanatory model would result in the same defect prediction, regardless of the release plan.}
-\label{fig:use_non_explanatory_model}
-\end{center}
-\end{figure}
+An alternative approach is to develop a model that will take into account the differences in composition of features and improvements between the release plans. In this case, one would expect that the predicted number of defects would vary across the release plans and that prediction uncertainty can be quantified by confidence intervals. Such a model would assume some explanatory relationship, such as shown in Figure \ref{fig:use_explanatory_model}.
 
-Instead, to support these \say{what-if} scenarios, a predictive model should depend also on the basic elements of the release plan: the planned features and improvements. Such a model would assume some explanatory relationship, so that planned features and improvements somehow affect the outcome (see figure \ref{fig:use_explanatory_model} for an illustration). If such a model were used, this would give release planners a path towards evaluating the additional development time needed to address bug fallout, for a given release plan. By ensuring sufficient time to fix bugs, the model can be used to ensure sufficient software quality is maintained, thus giving the release planner freedom to otherwise maximize the expected revenue produced by the software by including appropriate features and improvements.
-
-\begin{figure}[htbp!]
+\begin{figure}[htbp]
 \begin{center}
 \tikz[nodes={text height=1em, text depth=.2em, draw=black!20, thick, fill=white, font=\large}, rounded corners, semithick]
   \graph[layered layout, level distance = 1cm, sibling sep = 1em]{
@@ -81,16 +89,18 @@ Instead, to support these \say{what-if} scenarios, a predictive model should dep
     "Explanatory Model" -> "...";
     "Explanatory Model" -> "Predicted Defects N";
   };
-\caption{Using an explanatory model allows for the possibility of different defect predictions for each release plan.}
+\caption[An explanatory model]{Using an explanatory model allows for the possibility of different defect predictions for each release plan.}
 \label{fig:use_explanatory_model}
 \end{center}
 \end{figure}
 
-\subsection*{Application to the Next Release Problem}
+Since predictive models will have some inaccuracy, but confidence levels can be used to quantify the uncertainty of future prediction based on past accuracy. This would allow release planners to assess the risk of relying on the defect prediction. A higher confidence level results in less risk because it encompasses a larger window for the prediction. Conversely, a lower confidence level results in more risk and a more narrow prediction window.
+
+\subsection{Application to the Next Release Problem}
 Release plan optimization is exactly the goal of The Next Release Problem (NRP), but there is a gap between the abstract domain of the NRP and the detailed, messy data found in software projects. By applying an explanatory predictive model there is a path toward bridging this gap, opening up the potential for using NRP optimization techniques in real-world release planning. In this section, first the NRP is described, then the gap between it and practical planning is discussed, and finally it is shown how the explanatory model suggested earlier would be applied to help bridge this gap.
 
-\subsubsection*{Defining the NRP}
-The Next Release Problem (NRP) was defined by Bagnall, Rayward-Smith, and Whittley\cite{2001_bagnall_nrp}, and was shown to be NP-Hard. Being abstract in its treatment of feature cost, a broad range of optimization techniques can be applied to the NRP, such as integer programming, hill climbing, simulated annealing, genetic algorithms, etc. The NRP is the subject of academic research in the area of Search-Based Software Engineering\cite{2010_jiang_hybrid,2012_xuan_solving,2007_zhang_multi_obj_nrp}.
+\subsubsection{Defining the NRP}
+The Next Release Problem (NRP) was defined by Bagnall, Rayward-Smith, and Whittley \cite{2001_bagnall_nrp}, and was shown to be NP-Hard. Being abstract in its treatment of feature cost, a broad range of optimization techniques can be applied to the NRP, such as integer programming, hill climbing, simulated annealing, genetic algorithms, etc. The NRP is the subject of academic research in the area of Search-Based Software Engineering \cite{2010_jiang_hybrid,2012_xuan_solving,2007_zhang_multi_obj_nrp}.
 
 The NRP describes the situation where software project planners, who have multiple customers to satisfy, would like to maximize the revenue produced from completing the project. This is all described mathematically as follows.
 
@@ -121,7 +131,7 @@ subject~to~~~& cost(\bigcup_{i \in S} \hat{R}_i) \le B
 \end{split}
 \end{equation}
 
-\subsubsection*{The Gap Between Abstraction and Reality}
+\subsubsection{The Gap Between Abstraction and Reality}
 As was discussed in the previous section, a planner would need several things to be able to implement a NRP-like optimization:
 \begin{enumerate}
 \item{A set of requirements that could potentially be implemented.}
@@ -132,38 +142,22 @@ As was discussed in the previous section, a planner would need several things to
 
 Having all these in hand, a planner could proceed to optimize the subset of requirements planned for the next release. One difficulty with this that can be highlighted is in the definition of a cost function. It might be suggested that the estimated time to implement a requirement alone might be used to determine cost, but there is a practical detail that prevents this: in order to maintain quality software, the total cost of any requirement should take into consideration both the cost of implementation \emph{and} the cost of fixing associated defects. Otherwise, a release plan would appear to be within budget, when there is a risk that the budget will be exceeded when defect costs are also considered.
 
-\subsubsection*{Bridging the Gap}
-We use the explanatory model to address the need to consider defect cost. Such a model, given some subset of proposed requirements, can be used to predict defects and to find additional cost which should be considered.
+\subsubsection{Bridging the Gap}
+We use the explanatory model to address the need to consider defect cost. Such a model, given some subset of proposed requirements, can be used to predict defects and to find additional cost which should be considered. This use of the predictive model is illustrated in Figure \ref{fig:apply_model_in_nrp}.
 
-\begin{figure}[!h]
+\begin{figure}[htbp]
 \begin{center}
 \tikz[nodes={text height=1em, text depth=.2em, draw=black!20, thick, fill=white, font=\large}, rounded corners, semithick]
   \graph[tree layout]{
     "Requirements Subset" -> "Predictive Model" -> "Predicted Defects" -> "Defect Cost Function" -> "$\Sigma$" -> "Total Cost";
     "Requirements Subset" -> "Requirements Cost Function" -> "$\Sigma$";
   };
-\caption{Defect prediction model used in determining overall cost of some requirements subset.}
+\caption[Overall cost of requirements]{Defect prediction model used in determining overall cost of some requirements subset.}
 \label{fig:apply_model_in_nrp}
 \end{center}
 \end{figure}
 
 Since predictive models cannot be perfectly accurate, instead we would expect that any forecasting would include confidence levels. Taking into account the confidence of a prediction allows planners to account for risk in the use of the defect prediction. If more risk is acceptable, then planners will get a narrower prediction window, and in exchange take more of a chance that the prediction is inaccurate. A wider prediction window means, though, that when the defect prediction is used to determine requirements cost, that potential cost range will also be wider.
-
-\section*{Related Work}
-\label{sec:related_work}
-
-Software defect (bug) prediction typically involves a detailed analysis of code or proposed design changes. Some of these analytical methods are mentioned next. Then several statistical approaches to prediction are discussed.
-
-Akiyama \cite{1971_akiyama} predicted defect counts based on lines of code (LOC), number of decisions, and the number of subroutine calls. Gafney \cite{1984_gaffney_estimating} likewise predicted defect count based on LOC. Rather than code itself, Henry and Kafura \cite{1984_henry_evaluation} define metrics that are based on information taken from design documents, to be used in defect prediction. Nagappan and Ball \cite{2005_nagappan_codechurn} use relative code churn (lines modified) as a metric for predicting the density of defects. Giger, Pinzger, and Gall \cite{2011_giger_finegrained} compare the use of code churn to a more fined-grained approach, capturing \say{the exact code changes and their semantics down to statement level.}
-
-\subsection*{Statistical Approaches to Defect Prediction}
-Rather than requiring a detailed code analysis to predict defects, the approach proposed in this paper is to develop a mathematical model based on historical data on defect occurrences. Specifically, the proposed approach is to develop a defect prediction model using previous software features, improvements, and defects.
-
-A related approach, used by Li, Shaw, Herbsleb, Ray, and Santhanam\cite{2004_li_emperical_eval}, is to study only the defect occurrences themselves, and attempt to develop a mathematical model for defect projection. In their work, functions were fitted to a time series of defect occurrences, then the function parameters themselves were extrapolated for each new release. They found that the Weibull model fit best in 73\% of the tested software releases. They attempted to extrapolate model parameters using naive methods, moving averages, and exponential smoothing, but found these techniques to be \say{...inadequate in extrapolating model parameters of the Weibull model for defect-occurrence projection}. The reason given for this ineffectiveness is the changing nature of the software development system. For example, development practices, staffing levels, and usage patterns may all change between releases.
-
-In another related approach, Graves, Karr, Marron, and Siy\cite{2000_graves_predicting} developed several models that predict the future distribution of software faults in a given code module. The basis of their predictive models is a statistical analysis of change management data, which describes only the changes made to code files. The best model they found was a weighted time damping model, where every change in the module files contributed to fault prediction, with time-damping to account for age of changes. They achieved \say{slightly less successful performance} by basing a generalized linear model on just the modules age and the number of past changes. They also found factors that did not improve model performance: module length, number of developers making changes in the module, and how often a module is changed simultaneously with another module.
-
-In the final approach discussed here, by Singh, Abbas, Ahmad, and Ramaswamy\cite{2010_singh_predicting}, the Box-Jenkins method is applied to datasets from the \textit{Eclipse} and \textit{Mozilla} software projects, which are represented as time series data, and defect count is predicted using an ARIMA model. Their modeling effort is focused at the component-level, and they conclude that \say{current bug count of a component is linearly related to its previous bug count}.
 
 %\section{Exploratory Data Analysis}
 %\label{sec:exploratory}
@@ -377,72 +371,74 @@ In the final approach discussed here, by Singh, Abbas, Ahmad, and Ramaswamy\cite
 %%\subsubsection{Short-term Analysis Results}
 %%TODO
 
-\section*{Time Series Modeling}
+\section{Time Series Modeling}
 \label{sec:time_series_modeling}
-In this section, time series data and models are discussed.
+In this section, time series and autoregressive models are introduced. Then, further concepts related to modeling, exogeneity and stationarity, are discussed.
 
-\subsection*{Time Series}
-A time series is a collection of observations occurring in order. The process underlying a time series is assumed to be stochastic, so a model must be probabilistic. Critically, the sequence of observations cannot be re-arranged, because each observation is typically dependent somehow on previous observations. It is this dependence that complicates the modeling of time series data, because otherwise observations would be independent and values would simply follow some probability distribution. 
+\subsection{Time Series}
+A time series is a collection of observations that occur in order. The process underlying a time series is assumed to be stochastic, so the model must correspondingly be probabilistic. Critically, the sequence of observations cannot be re-arranged, as each observation is typically dependent on one or more previous observation. This dependence is termed autocorrelation and accounting for it is one of the primary functions of a time series model.
 
-\subsection*{Autocorrelation, ACF, and PCF}
-An important part of time series modeling is the use of autocorrelation, which measures the correlation of a sequence with itself. The autocorrelation function (ACF) and partial autocorrelation function (PACF) are used to measure autocorrelation as a function of time lag. These functions can be used to identify time series that can be modeled by a pure autoregressive function or a pure moving average function. They are also used to analyze residuals (difference between actual and fitted values) to check for statistically significant autocorrelation. 
+\subsection{Autoregressive Models}
+A basic autoregressive (AR) model is formed as a linear combination of previous values, plus a white noise term that accounts for random variations (the stochastic portion). An $AR(p)$ model for predicting a value $X$ at time $t$ can be written
+\begin{equation}
+X_t=c+\sum_{i=1}^{p}{\phi_t X_{t-1}+\epsilon_t}
+\end{equation}
 
-\subsection*{ARMA and ARIMA (Univariate) Models}
-The Box-Jenkins methodology describes the univariate ARMA and ARIMA models. The idea for these models begins with the idea of a sequence of independent shocks, generated by \say{random drawings from a fixed distribution}\cite{box_jenkins_reinsel_2008}. These shocks are knowns as a white noise process. The basic autoregressive, moving average (ARMA) stochastic model is then formed by a linear combination of previous white noise values and previous time series outputs. In the ARMA model, the ACF and PACF produce a vector, because the time series is univariate.
+where $\phi_1, \phi_2, ..., \phi_p$ are the $p$ parameters, $c$ is a constant, and $\epsilon_t$ is the white noise term.
 
-The ARMA stochastic model requires stationarity (or approximate stationarity). Differencing is performed to deal with data that is non-stationary. Adding differenced data leads to an extension of the ARMA model, the ARIMA model.
+When the AR model is extended to the multivariate case (i.e. allowing for multiple time series), a Vector AR (VAR) model is formed. This model will support not only a time series for defect count, but also time series for the two release plan variables: improvements and new features
 
-\subsection*{Endogeneity and Exogeneity}
-Exogenous variables are not considered to be under the \say{control} of the model, and instead should be considered an input. As such, a model should not try to account for an exogenous variable's behavior, but instead use past values to predict the behavior of other, endogenous (non-exogenous) variables.
+\subsection{Endogeneity and Exogeneity}
+Under the VAR model, the behavior of each time series is explained by both its own past values and the past values of the other time series. This makes the variables “endogenous".
+The alternative is that a time series should not be explained by itself, and is only used to explain other time series. This type of explanatory variable is called exogenous, and could be considered an input.
 
-\subsection*{VAR and VARX (Multivariate) Models}
-By extending the ARMA model to the multivariate case, allowing for multiple time series, a Vector ARMA model is formed. A special case of this model is the pure autoregressive model, or Vector AR (VAR) model. And, by including consideration for exogenous variables, the model becomes VARX. This model fits the needs of situation described in the \nameref{sec:motivation} section.
+By also considering exogenous variables, a VAR model would become a VARX model. This model meets the requirements of the explanatory model described in the Motivation section, since it would allow release plan variables to be kept exogenous and used only to explain defect count.
 
-However, these vector models so far have no way to account for non-stationary time series. So, as a preliminary step to using them, the time series data should either be stationary already, or differenced to become stationary. Trends and tests for stationarity will be discussed next.
+\subsection{Trends and Stationarity}
+AR, VAR, and VARX models do not account for non-stationary data. If a time series is not stationary, differencing may produce a stationary series. Trending time series are challenging to analyze, because the summary statistics of mean, variance, and autocovariance vary over time, and are therefore not interpretable \cite{franses1998time}. Two trend types are discussed here: deterministic and stochastic.
 
-\subsection*{Trends}
-Trending time series are challenging to analyze, because the summary statistics of mean, variance, and autocovariance will vary over time, and are therefore not interpretable\cite{franses1998time}. Two trend types are discussed: deterministic and stochastic. A deterministic trend will be moving upward or downward, so the time series mean is non-constant, but it will be according to a deterministic function. In this case, time series movements will follow generally the deterministic function, with non-permanent fluctuations above or below. Such a time series is said to be stationary around a deterministic trend. In contrast, a stochastic trend shows permanent effects whenever random shocks occur, not necessarily fluctuating only close to the area of deterministic function. Differencing is applied to remove a stochastic trend. In the following section, tests are discussed for determine whether a deterministic or stochastic trend is present.
+A deterministic trend will move upward or downward, meaning that the time series mean is non-constant. However, the time series will be constant according to a deterministic function and the time series movements will generally follow the deterministic function, with non-permanent fluctuations above or below. Such a time series is said to be stationary around a deterministic trend.
 
-\subsection*{Stationarity Tests}
+In contrast, a stochastic trend shows permanent effects whenever random variations occur, and the series will not necessarily fluctuate only close to the area of a deterministic function. The application of differencing can be used to remove a stochastic trend. 
+
 Stationarity can be strict or weak (of some order). Strict stationarity occurs when statistical properties are invariant with respect to shifts of the time origin\cite{moon2000mathematical}. Alternatively, a weak stationarity (of second order) can be established, and from this strict stationarity can be established by then assuming normality\cite{box_jenkins_reinsel_2008}.
 
-For a multivariate time series, stationarity holds if all the component univariate time series are stationary\cite{yang2005stationarity}, so the goal of stationarity testing will be to establish second-order stationarity for each univariate time series component, and then show that the assumption of normality is reasonable. This will establish the stationarity of the multivariate time series as a whole.
+For a multivariate time series, stationarity holds if all the component univariate time series are stationary\cite{yang2005stationarity}, so the goal of stationarity testing will be to establish second-order stationarity for each univariate time series component, and then show that the assumption of normality is reasonable. This will establish the stationarity of the multivariate time series as a whole. Next, tests are discussed for assessing if a deterministic or stochastic trend is present.
 
-\subsubsection*{Unit Root Testing}
-A time series that contains a stochastic trend is non-stationary. A pure auto-regressive (AR) model of such a time series contains a unit root\cite{franses1998time}. Testing for the presence of a unit root can therefore be used to test for non-stationarity. A unit-root test poses as the null hypothesis that an AR model has a unit root. Then, a test statistic is measured. If found to be significant, the null hypothesis cannot be rejected, and it is established that the time series has a stochastic trend and is therefore non-stationary. The augmented Dickey Fuller (ADF) test is often used for unit root testing.
+\subsection{Unit Root and Stationarity Testing}
+A time series that contains a stochastic trend is non-stationary. A pure auto-regressive (AR) model of such a time series contains a unit root\cite{franses1998time}. Testing for the presence of a unit root can therefore be used to test for non-stationarity. A unit-root test poses as the null hypothesis that an AR model has a unit root. Then, a test statistic is measured. If the test statistic is found to be significant, the null hypothesis cannot be rejected, and it is established that the time series has a stochastic trend and is therefore non-stationary. The Augmented Dickey Fuller (ADF) test is often used for unit root testing.
 
-\subsubsection*{Stationarity Testing}
 On the other hand, a stationarity test uses the null hypothesis that a time series is stationary around a deterministic trend. If the test statistic shows that this hypothesis can be rejected, at some significance level, then a stochastic trend should be considered, by the unit root test. The Kwiatkowski–Phillips–Schmidt–Shin (KPSS) test can be applied for testing stationarity.
 
-\section*{Data Methodology}
+\section{Data Methodology}
 \label{sec:data_methodology}
 
 In this section, the data source and data collection method are detailed. Then, the method of preparing data for the modeling phase is presented.
 
-\subsection*{Data Source}
+\subsection{Data Source}
 The empirical data used to establish a predictive model will be taken from software project historical data, found in an issue tracking system. In addition to tracking bugs, past and present, an issue tracking system can be used to track features, enhancements, or any other type of software process issue. 
 
-The data used so far comes from the \textit{MongoDB} \href{https://jira.mongodb.org/browse/SERVER}{Core Server} project, which has been ongoing since May of 2009. Data from versions 0.9.3 through 3.0.0-rc6 are used. The dataset contained $7042$ issues.
+The \textit{MongoDB} \href{https://jira.mongodb.org/browse/SERVER}{Core Server} software project was selected for initial application of the modeling methodology. The project has been actively developed since 2009. Data from versions 0.9.3 through 3.0.0-rc6 are used. The dataset contained $7042$ issues.
 
-\subsection*{Data Collection \& Cleansing}
-\textit{MongoDB} uses \href{https://www.atlassian.com/software/jira}{JIRA}\footnote{JIRA is an issue tracking and project management system made by \href{https://www.atlassian.com/}{Atlassian}, who provide free JIRA subscriptions for qualified open source projects.} for issue tracking. Issue data is exported from the project's JIRA web interface as XML data. Then, issue data is extracted from the JIRA XML data using a Python\footnote{\href{https://www.python.org/}{Python} is a dynamic, general purpose programming language.} script.
+\subsection{Data Collection \& Cleansing}
+\textit{MongoDB} uses \href{https://www.atlassian.com/software/jira}{JIRA}\footnote{JIRA is an issue tracking and project management system made by \href{https://www.atlassian.com/}{Atlassian}, who provide free JIRA subscriptions for qualified open source projects.} for issue tracking. Issue data is exported from the project's JIRA web interface as XML data. Then, issue data is extracted from the JIRA XML, and the following fields are kept from each issue: type, priority, creation date, resolution date.
 
-The following fields are kept from each issue: type, priority, creation date, resolution date.  Once extracted, the data is changed to text table format, suitable for reading in R\footnote{\href{http://www.r-project.org/}{R} is a popular software environment for statistical computing.}.
+Not all of the data was preserved for modeling. The modification or removal of data is discussed next.
 
-\subsubsection*{Unfixed Issues}
+\subsubsection{Unfixed Issues}
 The proposed model structure assumes that bug creation can be explained by software changes. Therefore, issues that do not result in any change should not be included in the dataset. For this reason, only issues with resolution \textit{fixed}, \textit{complete}, or \textit{done} will be kept. Other possible issue resolutions are: \textit{unresolved}, \textit{won't fix}, \textit{duplicate}, etc. In the data used, $18$ ($0.26\%$) of the issues were unfixed. 
 
-\subsubsection*{Sub-tasks}
+\subsubsection{Sub-tasks}
 Issues that are sub-tasks are first converted to be the same type as the parent issue. Those sub-tasks whose parent issue is not in the dataset are considered orphans and discarded. There were $20$ ($0.28\%$) orphaned sub-tasks encountered in the dataset, so this decision is not expected to have much impact on the outcome.
 
-\subsection*{Data Preparation}
-Once read into an R script, the data is operated on to prepare it for time series modeling. The data will be sampled, made stationary, and windowed. These steps are discussed next.
+\subsection{Data Preparation}
+After creation, the dataset was operated on to prepare it for time series modeling. The data was sampled, made stationary, and windowed. These three steps are discussed next.
 
-\subsubsection*{Sampling}
+\subsubsection{Sampling}
 
-First, the data is sampled by dividing time into sample periods. In each period, the data is sampled to measure: the number of improvements resolved, features resolved, and bugs created. As an example, this sampling process is illustrated in figure \ref{fig:sampling_issue_data}, with results shown in table \ref{tab:sampling_issue_data}.
+First, the data was sampled at regular periods to measure the following: number of improvements resolved, number of features resolved, and number of bugs created. A 7-day sampling period was used. As an example, this sampling process is illustrated in Figure \ref{fig:sampling_issue_data}, with results shown in Table \ref{tab:sampling_issue_data}.
 
-\begin{figure}[h!]
+\begin{figure}[htbp]
 \begin{center}
 \begin{tikzpicture}
   \node (bb) at (-2.3,2) [draw] {|Bug|};
@@ -459,13 +455,13 @@ First, the data is sampled by dividing time into sample periods. In each period,
   \draw (1.5,3.5) node {Period 3};
   \draw (4.5,3.5) node {...};
 \end{tikzpicture}
-\caption{Sampling issue data by dividing time into equally-spaced periods.}
+\caption[Sampling issue data]{Sampling issue data by dividing time into equally-spaced periods.}
 \label{fig:sampling_issue_data}
 \end{center}
 \end{figure}
 
-\begin{table}[h!]
-\caption{Results of sampling example issues shown in figure \ref{fig:sampling_issue_data}.}
+\begin{table}[htbp]
+\caption[Sampling issue data]{Results of sampling example issues shown in figure \ref{fig:sampling_issue_data}.}
 \centering
 \begin{tabular}{ c | c | c | c }
 \hline
@@ -480,22 +476,20 @@ Period & Improvements & New Features & Bugs \\
 \label{tab:sampling_issue_data}
 \end{table}
 
-\subsubsection*{Establishing Stationarity}
-To establish stationarity, we first need to see if we can rule out the presence of a stochastic trend by applying the augmented Dickey-Fuller (ADF) test. If we can indeed rule out a stochastic trend, we should be able to confirm stationarity by applying the KPSS test. Or, if a stochastic trend cannot be ruled out, then KPSS test should be applied to check that trend stationarity is also rejected. If the data is found to have a stochastic trend, it should be differenced and then retested to confirm (trend) stationarity.
+\subsubsection{Establishing Stationarity}
+To establish stationarity, we first need to see if we can rule out the presence of a stochastic trend by applying the augmented Dickey-Fuller (ADF) test. If we can indeed rule out a stochastic trend, we should be able to confirm stationarity by applying the KPSS test. Or, if a stochastic trend cannot be ruled out, then KPSS test should be applied to check that trend stationarity is also rejected. If the data is found to have a stochastic trend, it should be differenced and then retested to confirm (trend) stationarity. In both tests, it will be assumed that the deterministic component is constant, with an intercept but no trend.
 
-The \textit{urca}\footnote{The \href{http://cran.r-project.org/web/packages/urca}{urca} library provides tests for time series data, and is freely available as a package for the \textit{R} computing environment.} library provides \texttt{ur.df} and \texttt{ur.kpss} functions for performing these test. In both tests, it will be assumed that the deterministic component is constant, with an intercept but no trend.
+%The \textit{urca}\footnote{The \href{http://cran.r-project.org/web/packages/urca}{urca} library provides tests for time series data, and is freely available as a package for the \textit{R} computing environment.} library provides \texttt{ur.df} and \texttt{ur.kpss} functions for performing these test. 
 
-\subsubsection*{Time Windowing}
-It is assumed that the software development process underlying a given project may change over time. Rather than developing a model that also changes over time, the data will be kept for modeling only if it occurs within a time window. This will limit the amount of process change the model is exposed to. The time window should balance between: more observations to capture consistent long-term behaviors, and fewer observations to limit exposure to inconsistent short-term behaviors.
+\subsubsection{Time Windowing}
+It is assumed that the software development process underlying a given project might change over time. Rather than developing a model that also changes over time, the data will be kept for modeling only if it occurs within a time window. This will limit the amount of process change the model is exposed to. Taking this approach means that the entire modeling methodology will be executed for each time-windowed part of the data.
 
-Taking this approach means that the entire modeling methodology will be executed for each time-windowed part of the data. 
-
-\section*{Modeling Methodology}
+\section{Modeling Methodology}
 \label{sec:modeling_methodology}
 
-The typical methodology used for building time series models involves specification, estimation, and diagnostics checking\cite[p. 478]{box_jenkins_reinsel_2008}. Once specified and estimated, the diagnostic checking step ensures that only valid models are considered for selection. The final step of modeling would be selection, where models are compared by some model selection criterion\cite[pg. 581]{box_jenkins_reinsel_2008}.
+The typical methodology used for building time series models involves specification, estimation, and diagnostics checking \cite[p. 478]{box_jenkins_reinsel_2008}. Once specified and estimated, the diagnostic checking step ensures that only valid models are considered for selection. The final step of modeling would be selection, where models are compared by some model selection criterion \cite[pg. 581]{box_jenkins_reinsel_2008}. This section presents the approach used to specify, estimate, check, and select a VARX model to be used for defect prediction.
 
-\subsection*{Model Specification \& Estimation}
+\subsection{Model Specification \& Estimation}
 Specification of a VARX($p$) model is accomplished by choosing an order $p$, which is the number of autoregressive terms to include in the model. Once an order is specified, the model parameters can be estimated by a procedure such as least squares regression.  
 
 The model order will directly affect the number of parameters included in the model. One goal of specification will be to avoid having too many parameters relative to the number of observations. The following derivation will lead to a simple rule for limiting the model order in this respect. First, let $n$ be the number of time samples in a time series. When there are $m$ time series, each sample contains $m$ observations, so there are $m n$ total observations for all time series. Next, for a VARX($p$) model of the $m$ time series variables, there are $m^2 p$ unknown parameters to be estimated. Let the ratio of observations to parameters be denoted by
@@ -520,48 +514,46 @@ p_{max} = \left \lfloor \frac{n}{m K_{min}} \right \rfloor
 
 With this upper bound, model specification will include the generation of models having order $1, 2,..., p_{max}$. These models, with their estimated parameters, will be candidates for final model selection after undergoing diagnostic checking.
 
-To estimate the parameters of a VARX model, the \textit{dse}\footnote{The \href{http://cran.r-project.org/web/packages/dse}{dse} library provides tools for time series models, and is freely available as a package for the \textit{R} computing environment.} library provides the \texttt{estVARXar} function.
+%To estimate the parameters of a VARX model, the \textit{dse}\footnote{The \href{http://cran.r-project.org/web/packages/dse}{dse} library provides tools for time series models, and is freely available as a package for the \textit{R} computing environment.} library provides the \texttt{estVARXar} function.
 
-\subsection*{Diagnostics Checking}
-To verify that a model can be accepted, diagnostic checking is performed. Included in this step is testing for stability and for model inadequacy.
+\subsection{Diagnostics Checking}
+Diagnostic checking is performed to verify that a model can be accepted. This step includes testing for stability and for model inadequacy.
 
-\subsubsection*{Stability Tests}
-For an ARMA model to be stable, the roots of the process characteristic equation must lie outside the unit circle\cite[p. 56]{box_jenkins_reinsel_2008}. Equivalently, the inverse of the roots must lie inside the unit circle. The \textit{dse} library provides the \texttt{stability} function for performing this test.
+For model with an AR portion to be stable, the roots of the process characteristic equation must lie outside the unit circle \cite[p. 56]{box_jenkins_reinsel_2008}. Equivalently, the inverse of the roots must lie inside the unit circle. 
+%The \textit{dse} library provides the \texttt{stability} function for performing this test.
 
-\subsubsection*{Portmanteau Test}
-For an adequate ARMA model, it can be shown that \say{As the series length increases, the [model residuals] become close to the white noise...}\cite[p. 338]{box_jenkins_reinsel_2008}. For this reason, there are model inadequacy tests formed around a study of the residuals. These lack-of-fit tests are a kind of portmanteau test.
+\subsubsection{Portmanteau Test}
+For an adequate ARMA model, it can be shown that \say{As the series length increases, the [model residuals] become close to the white noise...} \cite[p. 338]{box_jenkins_reinsel_2008}. For this reason, there are model inadequacy tests formed around a study of the residuals.
 
-One of these tests, the Ljung-Box test, forms a statistic from the autocorrelation of the residuals (up to some lag). In this test, the null hypothesis is that residuals are independent, so their autocorrelation is not high enough to be distinguished from a white noise series. To support this hypothesis, the test p-value should be above some level of significance, say $5\%$. The \textit{stats}\footnote{The \href{http://stat.ethz.ch/R-manual/R-patched/library/stats/html/00Index.html}{stats} library provides core statistics functions, and is freely available as a package for the \textit{R} computing environment.} library provides the \texttt{Box.test} function for performing the Ljung-Box test.
+One of these tests, the Ljung-Box test, forms a statistic from the autocorrelation of the residuals (up to some lag). In this test, the null hypothesis is that residuals are independent, so their autocorrelation is not high enough to be distinguished from a white noise series. To support this hypothesis, the test p-value should be above some level of significance, say $5\%$. 
 
-\subsection*{Model Selection}
-Model selection criteria are used to compare models by their fit, to minimize residual error, and penalizing the model to some degree by the number of parameters. In the case of Akaike Information Criterion (AIC), for ARMA models in general:
-\begin{equation}
-AIC_{p,q}=ln{|\tilde{\mathbf{\Sigma}_r}|}+2r/n,
-\end{equation}
-where $n$ is the number of samples, $r$ is the number of parameters, and  $\tilde{\mathbf{\Sigma}_r}$ is the residual covariance matrix estimate. AICc (AIC with correction) and BIC (Bayesian Information Criterion) are other well-known selection criteria. But, according to Bisgaard and Kulahci, \say{The penalty for introducing unnecessary parameters is more severe for BIC and AICC than for AIC}\cite{bisgaard2011time}. A less severe penalty for the number of parameters would be preferred in this case, since we are already limiting the number of parameters in the model specification step, and because additional parameters may in fact be necessary to account for time series autocorrelations with higher lags. Therefore, AIC will be used as the selection criterion.
+%The \textit{stats}\footnote{The \href{http://stat.ethz.ch/R-manual/R-patched/library/stats/html/00Index.html}{stats} library provides core statistics functions, and is freely available as a package for the \textit{R} computing environment.} library provides the \texttt{Box.test} function for performing the Ljung-Box test.
 
-The \textit{dse} library provides the \texttt{bestTSestModel} function for performing model selection.
+\subsection{Model Selection}
+Model selection criteria are used to compare models according to their fit, by penalizing for residual error and the number of parameters. There are a number of different selection criteria, including Akaike Information Criterion (AIC), AIC with correction (AICc), and Bayesian Information Criterion (BIC). Bisgaard and Kulahci noted that “[t]he penalty for introducing unnecessary parameters is more severe for BIC and AICC than for AIC” [3]. A less severe penalty for the number of parameters would be preferred in this case, since we are already limiting the number of parameters in the model specification step, and because additional parameters may in fact be necessary to account for time series autocorrelations with higher lags. Therefore, AIC was chosen as the selection criterion.
 
-\section*{Results}
+%The \textit{dse} library provides the \texttt{bestTSestModel} function for performing model selection.
+
+\section{Results}
 \label{sec:results}
 
-\subsection*{Data Collection}
+\subsection{Data Collection}
 
-The \textit{MongoDB} dataset was collected according to the methodology in the \nameref{sec:data_methodology} section, and the data set was sampled with a 7-day sample period to create the following time series: bugs created, improvements resolved, and new features resolved. These time series will be denoted $Y_{bug}$, $Y_{imp}$, and $Y_{new}$, respectively, and are shown in figure \ref{fig:time_series}.
+The \textit{MongoDB} dataset was collected according to the data methodology, and the data set was sampled with a 7-day sample period to create the following time series: bugs created, improvements resolved, and new features resolved. These time series will be denoted $Y_{bug}$, $Y_{imp}$, and $Y_{new}$, respectively, and are shown in figure \ref{fig:time_series}.
 
-\begin{figure}[htbp!]
+\begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=\textwidth]{assets/time_series}
-\caption{Time series data generated by sampling the \textit{MongoDB} dataset with a 7-day sample period.}
+\caption[Time series data]{Time series data generated by sampling the \textit{MongoDB} dataset with a 7-day sample period.}
 \label{fig:time_series}
 \end{center}
 \end{figure}
 
-\subsection*{Stationarity Testing}
+\subsection{Stationarity Testing}
 
 Before modeling, the time series were all checked for stationarity. The result of the ADF unit root and KPSS stationarity tests are listed in Table \ref{tab:stationarity_results}. The unit root tests showed less than $1\%$ significance for all time series. However, the stationarity test also showed low significance, meaning we have evidence to reject the hypothesis of stability. Since there is disagreement in the test results, the time series are differenced and the tests rerun.
 
-\begin{table}[h!]
+\begin{table}[htbp]
   \centering
   \begin{tabular}{ c | r r | r r | r r }
       & \multicolumn{2}{|c|}{$Y_{bug}$} & \multicolumn{2}{|c|}{$Y_{imp}$} & \multicolumn{2}{|c}{$Y_{new}$} \\
@@ -572,21 +564,21 @@ Before modeling, the time series were all checked for stationarity. The result o
     KPSS & 2.8521 & $< 1\%$ & 2.0208 & $< 1\%$ & 0.5269 & $2.5-5\%$ \\
     \hline
   \end{tabular}
-\caption{Results of running the ADF unit root test and KPSS stationarity test on $Y_{bug}$, $Y_{imp}$, and $Y_{new}$. The tests are ran using an intercept-only regression model.}
+\caption[Stationarity test results]{Results of running the ADF unit root test and KPSS stationarity test on $Y_{bug}$, $Y_{imp}$, and $Y_{new}$. The tests are ran using an intercept-only regression model.}
 \label{tab:stationarity_results}
 \end{table}
 
 After differencing we obtain the time series shown in figure \ref{fig:differenced_time_series}, which will be referred to as $Y_{\bigtriangledown bug}$, $Y_{\bigtriangledown imp}$, and $Y_{\bigtriangledown new}$. Now the result of the unit root and stationarity test (listed in Table \ref{tab:first_diff_stationarity_results}) both agree. That is, we can reject the hypothesis that a unit root (stochastic trend) is present at the $1\%$  significance level and we fail to reject the hypothesis of stationarity with greater than $10\%$ significance. Hence, the differenced time series will be used to move forward with modeling.
 
-\begin{figure}[htbp!]
+\begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=\textwidth]{assets/time_series_diff}
-\caption{Differenced time series data.}
+\caption[Differenced time series]{Differenced time series data.}
 \label{fig:differenced_time_series}
 \end{center}
 \end{figure}
 
-\begin{table}[h!]
+\begin{table}[htbp]
   \centering
   \begin{tabular}{ c | r r | r r | r r }
       & \multicolumn{2}{|c|}{$Y_{\bigtriangledown bug}$} & \multicolumn{2}{|c|}{$Y_{\bigtriangledown imp}$} & \multicolumn{2}{|c}{$Y_{\bigtriangledown new}$} \\
@@ -597,31 +589,31 @@ After differencing we obtain the time series shown in figure \ref{fig:difference
     KPSS & 0.0115 & $> 10\%$ & 0.0127 & $> 10\%$ & 0.0127 & $> 10\%$ \\
     \hline
   \end{tabular}
-\caption{Results of running the ADF unit root test and KPSS stationarity test on the differenced time series}
+\caption[Stationary test results for differenced time series]{Results of running the ADF unit root test and KPSS stationarity test on the differenced time series}
 \label{tab:first_diff_stationarity_results}
 \end{table}
 
-\subsection*{Time Windowing}
+\subsection{Time Windowing}
 A 78-week time window (approximately 18 months) was established to restrict model scope. Three of these windowed periods, non-overlapping, were kept for modeling. Since the data is being differenced, the first sample (week) is skipped. These windowed periods are denoted $W_{2-79}$, $W_{80-157}$, and $W_{158-235}$.
 
-\subsection*{Time Series Model}
+\subsection{Time Series Model}
 
-The VARX model, discussed in the \nameref{sec:time_series_modeling} section, was used to model the time series. This model was used because there are multiple time series to be considered jointly. $Y_{\bigtriangledown new}$ and $Y_{\bigtriangledown imp}$ time series were both considered exogenous, so that hypothetical future values could be considered in comparison of release plans, as discussed in the \nameref{sec:motivation} section.
+The modeling methodology was applied to the time series data, to produce a VARX model for each windowed period. The $Y_{\bigtriangledown new}$ and $Y_{\bigtriangledown imp}$ time series were both considered exogenous, so that their hypothetical future values alone could be used to make defect predictions.
 
-\subsection*{Model Specification \& Estimation}
+\subsection{Model Specification \& Estimation}
 
 By selecting $K_{min} = 4$, a maximum model order is obtained by
 \begin{equation}
 p_{max} = \left \lfloor \frac{78}{(3)(4)} \right \rfloor = \lfloor 6.5 \rfloor = 6
 \end{equation}
 
-Models of order $1,2,...,p_{max}$ were estimated for later diagnostic checking.
+So models of order $1$ through $p_{max}=6$ were estimated for later diagnostic checking.
 
-\subsection*{Model Diagnostic Checking}
+\subsection{Model Diagnostic Checking}
 
 Candidate models were tested for stability and inadequacy. A $5\%$ significance level was used in the Ljung-Box test. The results for each windowed period are shown in table \ref{tab:diagnostic_results}. All model orders were stable for all windowed periods. Several model orders were found to be inadequate by the Ljung-Box test: orders 1-2 for period $W_{2-79}$, and order 5 for period $W_{158-235}$.
 
-\begin{table}[h!]
+\begin{table}[htbp]
   \centering
   \begin{tabular}{ c | r r | r r | r r }
       & \multicolumn{2}{|c|}{$W_{2-79}$} & \multicolumn{2}{|c|}{$W_{80-157}$} & \multicolumn{2}{|c}{$W_{158-235}$} \\
@@ -635,14 +627,14 @@ Candidate models were tested for stability and inadequacy. A $5\%$ significance 
     6 & Yes & 0.2818 & Yes & 0.3838 & Yes & 0.05703 \\
     \hline
   \end{tabular}
-\caption{Results of running stability and Ljung-Box test on each windowed period.}
+\caption[Diagnostic test results]{Results of running stability and Ljung-Box test on each windowed period.}
 \label{tab:diagnostic_results}
 \end{table}
 
-\subsection*{Model Selection}
-Models that were not rejected for instability or inadequacy were then compared and the best for each windowed period was selected by AIC selection criterion. The results of selection are shown in table \ref{tab:selection_results}, with orders 4, 1, and 1 being chosen for periods $W_{2-79}$, $W_{80-157}$, and $W_{158-235}$, respectively. The fit for each of these models is demonstrated by plotting one-step predictions along with actual values, shown for each model in figure \ref{fig:one_step_predictions}.
+\subsection{Model Selection}
+Models that were not rejected for instability or inadequacy were then compared and the best for each windowed period was selected by AIC selection criterion. The results of selection are the bolded values shown in Table \ref{tab:selection_results}. The fit for each of these models is demonstrated by plotting one-step predictions along with actual values, as shown for each model in figure \ref{fig:one_step_predictions}. The fit for each appears to track well with many of the significant changes in the time series.
 
-\begin{table}[h!]
+\begin{table}[htbp]
   \centering
   \begin{tabular}{ c | r | r | r }
     ~ & \multicolumn{3}{|c}{AIC score} \\
@@ -656,11 +648,11 @@ Models that were not rejected for instability or inadequacy were then compared a
     6 & 414.9 & 461.7 & 508.8 \\
     \hline
   \end{tabular}
-\caption{Results of model selection, using AIC score to compare models of different order.}
+\caption[Model selection results]{Results of model selection, using AIC score to compare models of different order.}
 \label{tab:selection_results}
 \end{table}
 
-\begin{figure}
+\begin{figure}[htbp]
 \centering
 \subfloat[Windowed period $W_{2-79}$]{
 \includegraphics[width=\textwidth]{assets/one-step_predictions_2-79}
@@ -671,71 +663,70 @@ Models that were not rejected for instability or inadequacy were then compared a
 \subfloat[Windowed period $W_{158-235}$]{
 \includegraphics[width=\textwidth]{assets/one-step_predictions_158-235}
 }%
-\caption{One-step predictions vs actual values, for each model selected by AIC score.}
+\caption[One-step predictions]{One-step predictions vs actual values, for each model selected by AIC score.}
 \label{fig:one_step_predictions}
 \end{figure}
 
 
-%\begin{figure}[htbp!]
-%\begin{center}
-%\includegraphics[width=\textwidth]{assets/one-step_predictions}
-%\caption{Results of model fitting shown by one-step predictions.}
-%\label{fig:one_step_predictions}
-%\end{center}
-%\end{figure}
+\subsection{Forecasting}
 
-\subsection*{Model Hypothetical scenarios}
+The model selected for each windowed period was used to forecast the number of defects in the next sample after the end of the window. The input for making these predictions was the number of improvements and features that were expected to be resolved. The input values were converted to differences, since the underlying model was formed using differenced data. Differencing was then removed to provide the predicted number of future defects.
 
-TODO 
-%Lastly, the effects of hypothetical future values of $Y_{new}$ and $Y_{imp}$ are considered. Such hypothetical future values would be considered in the context of a software release plan. Different plans can be compared by their predicted values of $Y_{bug}$. The result of one-step $Y_{bug}$ predictions for hypothetical $Y_{new}$ and $Y_{imp}$ values are shown in Figures \ref{fig:scenarios2d} and \ref{fig:scenarios3d}. We see that using the VARX model, the one-step prediction case results in a linear relationship between hypothetical exogenous values and the predicted endogenous value.
-%
-%\begin{figure}[htbp!]
-%\begin{center}
-%\includegraphics[width=\textwidth]{assets/scenarios2d}
-%\caption{The effect of hypothetical future values for $Y_{new}$ and $Y_{imp}$, shown as a series of lines in 2D.}
-%\label{fig:scenarios2d}
-%\end{center}
-%\end{figure}
-%
-%\begin{figure}[htbp!]
-%\begin{center}
-%\includegraphics[width=\textwidth]{assets/scenarios3d}
-%\caption{The effect of hypothetical future values for $Y_{new}$ and $Y_{imp}$, shown as a plane in 3D.}
-%\label{fig:scenarios3d}
-%\end{center}
-%\end{figure}
+Table \ref{tab:forecasting_results} shows the resulting single-step, out-of-sample defect prediction data for the first time window, $W_{2-79}$, including the upper and lower bounds of the confidence intervals. The actual number of improvements, features, and bugs in the prediction sample period was 4, 0, and 18, respectively. Notice that the actual number of bugs, 18, is outside of the 90\% confidence interval, which spans from 6.4 to 13.79 (see the bold outlined row in Table \ref{tab:forecasting_results}). On the other hand, the actual number of future defects in the next window, $W_{80−157}$, was 17. This was inside the 90\% confidence interval, which spans from 13.38 to 18.00.
 
-\section*{Proposed Work}
-\label{sec:proposed_work}
-
-After applying the data and modeling methodologies to the \textit{MongoDB} dataset, a model is in-hand for each windowed time period. However, to adequately answer the question of whether such models can be used in release planning, further still remains. This proposed work is as follows:
-
-\begin{enumerate}
-\item
-Apply the model to hypothetical \say{release plans}, that is, predict future values of $Y_{bug}$ using hypothetical future values of $Y_{imp}$ and $Y_{new}$. Keeping in mind the prediction confidence intervals, this would indicate how such a model might be in release-planning.
-
-\item
-Follow the same methodologies with two other SW projects.
-\end{enumerate}
-
-The time estimated to complete the proposed work is summarized in the timeline shown in Table \ref{tab:timeline}.
-
-\begin{table}[h]
-\centering
-\begin{tabular}{ p{2.5in} l l}
-\hline
-Task & Date \\
-\hline
-Form committee & Mar 9-13 \\
-Present proposal & Mar 18 \\
-Respond to committee feedback & Mar 18 - Apr 8 \\
-Apply models for release planning & Apr 1-15 \\
-Repeat on two other SW projects & Apr 15 - May 6 \\
-\hline
-\end{tabular}
-\caption{Timeline for proposed work}
-\label{tab:timeline}
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{ c | c | c | c | c | c | c }
+    Improvements & Features & 90\% low & 75\% low & Mean & 75\% high & 90\% high \\
+    \hline
+2 & 0 & 5.61 & 6.72 & 9.31 & 11.89 & 13.00 \\
+2 & 1 & 5.54 & 6.66 & 9.24 & 11.82 & 12.93 \\
+2 & 2 & 5.48 & 6.59 & 9.17 & 11.75 & 12.86 \\
+2 & 3 & 5.41 & 6.52 & 9.1 & 11.69 & 12.8 \\
+4 & 0 & 6.4 & 7.51 & 10.09 & 12.68 & 13.79 \\
+4 & 1 & 6.33 & 7.44 & 10.03 & 12.61 & 13.72 \\
+4 & 2 & 6.27 & 7.38 & 9.96 & 12.54 & 13.65 \\
+4 & 3 & 6.2 & 7.31 & 9.89 & 12.48 & 13.59 \\
+    \hline
+  \end{tabular}
+\caption[Forecasting results]{Forecasting at the end of the first time window, $W_{2-79}$. Future output values are predicted for a number of hypothetical input values.}
+\label{tab:forecasting_results}
 \end{table}
+
+To gauge how well prediction will work in general, a sliding 78-week window was applied. The sliding window started at the first sample period, and was shifted by one sample period after modeling. Only the actual number of improvements and features were used in this forecasting. The resulting distribution of errors between the mean forecasted bugs and the actual number of bugs is shown as a histogram in Figure \ref{fig:forecast_errors}. Note that the histogram appears to be normally distributed.  The actual number of bugs was inside the 90\% confidence interval for 23.87\% of the sliding window ranges.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{assets/forecast_errors}
+\caption[Forecast errors]{Histogram of forecast mean errors obtained using a 78-week sliding window.}
+\label{fig:forecast_errors}
+\end{figure}
+
+\section{Conclusions and Future Work}
+\label{sec:conclusions}
+The VARX modeling methodology was successfully applied to the time series data collected from the \textit{MongoDB} project. A model was created for each of three time windows and then used to make defect predictions for a range of hypothetical values for the number of improvements and features. Also, a picture of the prediction performance was obtained by applying the approach with a sliding window. This resulted in a normally distributed error between the mean forecasted and actual number of bugs. A low proportion (23.87\%) of the sliding window ranges included the actual number of bugs using a 90\% confidence interval. These results indicate that the VARX model had a low prediction accuracy for the actual number of defects in the MongoDB dataset.
+
+Having applied the VARX time series model to one project dataset, a next step is to apply the methodology to other software project data sets, such as \textit{Eclipse} or \textit{Mozilla}, to better determine the applicability of the modeling approach. The estimated time to complete this additional work is one month. 
+
+%The time estimated to complete this additional work is summarized in the timeline shown in Table \ref{tab:timeline}.
+%
+%\begin{table}[h]
+%\centering
+%\begin{tabular}{ p{2.5in} l l}
+%\hline
+%Task & Date \\
+%\hline
+%Form committee & Mar 9-13 \\
+%Present proposal & Mar 18 \\
+%Respond to committee feedback & Mar 18 - Apr 8 \\
+%Apply models for release planning & Apr 1-15 \\
+%Repeat on two other SW projects & Apr 15 - May 6 \\
+%\hline
+%\end{tabular}
+%\caption[Timeline for proposed work]{Timeline for proposed work}
+%\label{tab:timeline}
+%\end{table}
+
 
 %%\appendix
 %%\section{Software Requirements}
