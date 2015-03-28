@@ -13,4 +13,8 @@
 \beamer@subsectionintoc {4}{1}{Time Series}{17}{0}{4}
 \beamer@subsectionintoc {4}{2}{Autoregressive Models}{18}{0}{4}
 \beamer@subsectionintoc {4}{3}{Endogeneity and Exogeneity}{20}{0}{4}
-\beamer@sectionintoc {5}{References}{22}{0}{5}
+\beamer@subsectionintoc {4}{4}{Stationarity and Trends}{22}{0}{4}
+\beamer@subsectionintoc {4}{5}{Stationarity Testing}{25}{0}{4}
+\beamer@sectionintoc {5}{Modeling Methodology}{27}{0}{5}
+\beamer@sectionintoc {6}{Data Methodology}{28}{0}{6}
+\beamer@sectionintoc {7}{References}{29}{0}{7}

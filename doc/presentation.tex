@@ -1,4 +1,5 @@
 \documentclass[presentation]{beamer}
+%\documentclass[handout]{beamer}
 \usetheme{Frankfurt}
 \usecolortheme{seahorse}
 
@@ -28,7 +29,7 @@ Computational Science Program}
 
 \begin{frame}
 \frametitle{Outline}
-\tableofcontents
+\tableofcontents[hideallsubsections] 
 \end{frame}
 
 \section{Introduction}
@@ -232,7 +233,6 @@ Computational Science Program}
 
 \section{Time Series Modeling}
 
-
 \begin{frame}
 \begin{center}
 \Large{Time Series Modeling}
@@ -299,6 +299,105 @@ its own past values and the past values of the other time series}
 VARX model}
 \end{itemize}
 \end{frame}
+
+\subsection{Stationarity and Trends}
+
+\begin{frame}[t]
+\frametitle{Stationarity}
+\begin{itemize}
+\item{A stationary time series has time-invariant statistics}
+\item{The time series models so far require time series to be stationary}
+\item{Differencing a non-stationary series may produce a stationary series}
+\item{Stationary can determined by testing for trends}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]
+\frametitle{Deterministic Trends}
+\footnotesize{
+\begin{itemize}
+\item{A time series with a deterministic trend has a non-constant mean}
+\item{The time series movements will generally follow the deterministic function}
+\item{Fluctuations above or below this function are non-permanent}
+\item{Such a time series is said to be stationary around a deterministic trend}
+\end{itemize}
+}
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=\textwidth]{assets/deterministic_trend.eps}
+\caption{Time series with a deterministic trend.}
+\end{center}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}[t]
+\frametitle{Stochastic Trends}
+\footnotesize{
+\begin{itemize}
+\item{A stochastic trend shows permanent effects due to random variations}
+\item{A series with stochastic trend will not necessarily fluctuate only close to the area of a deterministic function}
+\item{A time series with stochastic trend is non-stationary}
+\item{Differencing can be used to remove a stochastic trend}
+\end{itemize}
+}
+\vspace{-.2cm}
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=\textwidth]{assets/stochastic_trend.eps}
+\caption{Time series with a stochastic trend.}
+\end{center}
+\end{figure}
+\end{frame}
+
+\subsection{Stationarity Testing}
+
+\begin{frame}[t]
+\frametitle{Stationarity Testing}
+\footnotesize{
+\begin{itemize}
+\item{A pure AR model of a time series with stochastic trend contains a unit root \cite{franses1998time}}
+\item{Testing for the presence of a unit root can therefore be used to test for non-stationarity}
+\item{A unit-root test starts with the null hypothesis that an AR model has a unit root}
+\item{The alternative hypothesis is that an AR model of the time series does not have a unit root}
+\item{Next, a test statistic is measured}
+\item{If the test statistic is below the chosen significance level, the null hypothesis is rejected}
+\item{Rejecting the null hypothesis provides reason to accept the alternative hypothesis}
+\item{The Augmented Dickey Fuller (ADF) test is commonly used for unit root testing}
+\end{itemize}
+}
+\end{frame}
+
+\begin{frame}[t]
+\frametitle{Stationarity Testing (cont'd)}
+\footnotesize{
+\begin{itemize}
+\item{On the other hand is a stationarity test}
+\item{This test starts with the null hypothesis that a time series is stationary around a deterministic trend}
+\item{If the test statistic is above some significance level, this shows that the null hypothesis can be accepted}
+\item{Then the time series should be considered stationary}
+\item{The Kwiatkowski-Phillips-Schmidt-Shin (KPSS) test can be applied for testing stationarity.}
+\end{itemize}
+}
+\end{frame}
+
+\section{Modeling Methodology}
+
+\begin{frame}
+\begin{center}
+\Large{Modeling Methodology}
+\end{center}
+\end{frame}
+
+\section{Data Methodology}
+
+\begin{frame}
+\begin{center}
+\Large{Data Methodology}
+\end{center}
+\end{frame}
+
+\note{In this section, the data source and data collection method are detailed. Then, the method of preparing data for the modeling phase is presented.}
 
 \section{References}
 
