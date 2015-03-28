@@ -388,7 +388,7 @@ where $\phi_1, \phi_2, ..., \phi_p$ are the $p$ parameters, $c$ is a constant, a
 When the AR model is extended to the multivariate case (i.e. allowing for multiple time series), a Vector AR (VAR) model is formed. This model will support not only a time series for defect count, but also time series for the two release plan variables: improvements and new features
 
 \section*{Endogeneity and Exogeneity}
-Under the VAR model, the behavior of each time series is explained by both its own past values and the past values of the other time series. This makes the variables “endogenous".
+Under the VAR model, the behavior of each time series is explained by both its own past values and the past values of the other time series. This makes the variables endogenous.
 The alternative is that a time series should not be explained by itself, and is only used to explain other time series. This type of explanatory variable is called exogenous, and could be considered an input.
 
 By also considering exogenous variables, a VAR model would become a VARX model. This model meets the requirements of the explanatory model described in the Motivation section, since it would allow release plan variables to be kept exogenous and used only to explain defect count.

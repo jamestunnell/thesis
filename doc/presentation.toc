@@ -1,0 +1,16 @@
+\beamer@endinputifotherversion {3.24pt}
+\beamer@sectionintoc {1}{Introduction}{3}{0}{1}
+\beamer@subsectionintoc {1}{1}{Release Planning}{4}{0}{1}
+\beamer@subsectionintoc {1}{2}{Quality Control}{5}{0}{1}
+\beamer@subsectionintoc {1}{3}{Defect Prediction}{7}{0}{1}
+\beamer@sectionintoc {2}{Motivation}{8}{0}{2}
+\beamer@subsectionintoc {2}{1}{Release Plan Optimization}{9}{0}{2}
+\beamer@subsectionintoc {2}{2}{Explanatory Model}{11}{0}{2}
+\beamer@sectionintoc {3}{Related Work}{13}{0}{3}
+\beamer@subsectionintoc {3}{1}{Code Analysis}{14}{0}{3}
+\beamer@subsectionintoc {3}{2}{Historical Information}{15}{0}{3}
+\beamer@sectionintoc {4}{Time Series Modeling}{16}{0}{4}
+\beamer@subsectionintoc {4}{1}{Time Series}{17}{0}{4}
+\beamer@subsectionintoc {4}{2}{Autoregressive Models}{18}{0}{4}
+\beamer@subsectionintoc {4}{3}{Endogeneity and Exogeneity}{20}{0}{4}
+\beamer@sectionintoc {5}{References}{22}{0}{5}
