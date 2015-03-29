@@ -1,5 +1,6 @@
-ts.plot <- function(ts, fname, width = 800, height.each = 200, cex=1.5){
-  png(fname, width=width, height=height.each*ncol(ts))
+ts.plot <- function(ts, fname, width = 8, height.each = 2, cex=1.5){
+  postscript(file=fname, width=width, height=height.each*ncol(ts),
+             onefile=TRUE, horizontal=FALSE)
   par(cex.lab=cex, cex.axis=cex, mfrow=c(ncol(ts),1))
   
   for(i in 1:ncol(ts)){
@@ -12,28 +13,17 @@ ts.plot <- function(ts, fname, width = 800, height.each = 200, cex=1.5){
   par(cex.lab=1, cex.axis=1, mfrow=c(1,1))
 }
 
-plot.predictions <- function(model, x.range, fname, n.plots = 1, width = 800, height.per = 200, cex = 1.5){
+plot.predictions <- function(model, x.range, fname, width = 8, height = 3, cex = 1.5){
   y <- model$data$output
   n <- length(y)
   x <- x.range
   
-  png(fname, width=width, height=n.plots*height.per)
-  par(mfrow=c(n.plots,1), cex=cex)
-  f = n %% n.plots
-  l <- 1
-  m <- ceiling(n/n.plots)
-  for(i in 1:n.plots){
-    if(i <= f){
-      r <- l + m - 1
-    } else {
-      r <- l + m - 2
-    }
-    
-    plot(x[l:r], y[l:r],main=NULL, type="l", xlab="week", ylab=colnames(y))
-    lines(x[l:r],model$estimates$pred[l:r], col="red", lty=2)
-    legend("topleft",legend=c("Actual","Fitted"),col=c("black","red"), lty=c(1,2))
-    l <- r + 1
-  }
+  postscript(file=fname, width=width, height=height,
+             onefile=TRUE, horizontal=FALSE)
+  #par(cex.lab=cex, cex.axis=cex, cex=cex)
+  plot(x, y,main=NULL, type="l", xlab="week", ylab=colnames(y))
+  lines(x,model$estimates$pred, col="red", lty=2)
+  #legend("topleft",legend=c("Actual","Fitted"),col=c("black","red"), lty=c(1,2))
   garbage <- dev.off()
-  par(mfrow=c(1,1), cex=1)
+  #par(cex.lab=1, cex.axis=1, cex=1)
 }

@@ -2,7 +2,6 @@
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{graphicx}
-%\usepackage{subcaption}
 \usepackage{subfig}
 \usepackage[section]{placeins}
 \usepackage{tikz}
@@ -529,7 +528,7 @@ One of these tests, the Ljung-Box test, forms a statistic from the autocorrelati
 %The \textit{stats}\footnote{The \href{http://stat.ethz.ch/R-manual/R-patched/library/stats/html/00Index.html}{stats} library provides core statistics functions, and is freely available as a package for the \textit{R} computing environment.} library provides the \texttt{Box.test} function for performing the Ljung-Box test.
 
 \section*{Model Selection}
-Model selection criteria are used to compare models according to their fit, by penalizing for residual error and the number of parameters. There are a number of different selection criteria, including Akaike Information Criterion (AIC), AIC with correction (AICc), and Bayesian Information Criterion (BIC). Bisgaard and Kulahci noted that “[t]he penalty for introducing unnecessary parameters is more severe for BIC and AICC than for AIC” [3]. A less severe penalty for the number of parameters would be preferred in this case, since we are already limiting the number of parameters in the model specification step, and because additional parameters may in fact be necessary to account for time series autocorrelations with higher lags. Therefore, AIC was chosen as the selection criterion.
+Model selection criteria are used to compare models according to their fit, by penalizing for residual error and the number of parameters. There are a number of different selection criteria, including Akaike Information Criterion (AIC), AIC with correction (AICc), and Bayesian Information Criterion (BIC). Bisgaard and Kulahci noted that “[t]he penalty for introducing unnecessary parameters is more severe for BIC and AICC than for AIC” \cite{bisgaard2011time}. A less severe penalty for the number of parameters would be preferred in this case, since we are already limiting the number of parameters in the model specification step, and because additional parameters may in fact be necessary to account for time series autocorrelations with higher lags. Therefore, AIC was chosen as the selection criterion.
 
 %The \textit{dse} library provides the \texttt{bestTSestModel} function for performing model selection.
 
@@ -639,10 +638,10 @@ Models that were not rejected for instability or inadequacy were then compared a
     ~ & \multicolumn{3}{|c}{AIC score} \\
     Model order & $W_{2-79}$ & $W_{80-157}$ & $W_{158-235}$ \\
     \hline
-    1 & N/A & 429.8 & 477.9 \\
+    1 & N/A & \textbf{429.8} & \textbf{477.9} \\
     2 & N/A & 439.3 & 482.4 \\
     3 & 400.8 & 440.9 & 489.7 \\
-    4 & 400.3 & 450.2 & 499.9 \\ 
+    4 & \textbf{400.3} & 450.2 & 499.9 \\ 
     5 & 404.0 & 456.7 & N/A \\
     6 & 414.9 & 461.7 & 508.8 \\
     \hline
@@ -654,15 +653,15 @@ Models that were not rejected for instability or inadequacy were then compared a
 \begin{figure}[htbp]
 \centering
 \subfloat[Windowed period $W_{2-79}$]{
-\includegraphics[width=\textwidth]{assets/one-step_predictions_2-79}
+\includegraphics[width=\textwidth]{assets/one-step_predictions_2-79.eps}
 }\\
 \subfloat[Windowed period $W_{80-157}$]{
-\includegraphics[width=\textwidth]{assets/one-step_predictions_80-157}
+\includegraphics[width=\textwidth]{assets/one-step_predictions_80-157.eps}
 }\\
 \subfloat[Windowed period $W_{158-235}$]{
-\includegraphics[width=\textwidth]{assets/one-step_predictions_158-235}
+\includegraphics[width=\textwidth]{assets/one-step_predictions_158-235.eps}
 }%
-\caption[One-step predictions]{One-step predictions vs actual values, for each model selected by AIC score.}
+\caption[One-step predictions]{Actual values (solid) vs. one-step predictions (dotted), for each selected model.}
 \label{fig:one_step_predictions}
 \end{figure}
 

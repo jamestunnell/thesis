@@ -17,9 +17,9 @@ options:
 library(docopt)
 # opts <- docopt(doc) # retrieve the command-line arguments
 opts <- list(
-  ISSUES_FILE = "~/../thesis/data/mongodb/issues.txt",
-  outdir = "~/../thesis",
-  srcdir = "~/../thesis/src",
+  ISSUES_FILE = "~/projects/thesis/data/mongodb/issues.txt",
+  outdir = "~/projects/thesis",
+  srcdir = "~/projects/thesis/src",
   period = "7"
 )
 
@@ -46,7 +46,7 @@ ts <- as.xts(data.frame(Bugs=s$bugs, Improvements=s$imps, Features=s$news), s$da
 # cat("=========================================\n\n")
 
 # cat("Plotting time-series\n")
-fname <- file.path(out.dir, "time_series.png")
+fname <- file.path(out.dir, "time_series.eps")
 ts.plot(ts, fname)
 
 ST_TYPE = "constant"
@@ -74,7 +74,7 @@ if(needs.diffed){
   }
 
 #   cat("Plotting differenced time-series\n")
-  fname <- file.path(out.dir, "time_series_diff.png")
+  fname <- file.path(out.dir, "time_series_diff.eps")
   ts.plot(ts[2:nrow(ts)], fname)
 #   cat("\n")
 }
@@ -114,8 +114,8 @@ for(w.start in (if(diffed){ 2 } else{ 1 }):(nrow(ts)-w.size)){
   }
   
 #   cat("Plotting one-step ahead predictions\n")
-  fname <- file.path(out.dir, paste0("one-step_predictions_", s.min, "-", s.max, ".png"))
-  plot.predictions(model, s.range, fname, n.plots = 1, width = 1200, height.per = 400, cex = 1.35)
+  fname <- file.path(out.dir, paste0("one-step_predictions_", s.min, "-", s.max, ".eps"))
+  plot.predictions(model, s.range, fname, width = 8, height = 3, cex = 1.35)
 
 #   cat("=========================================\n")
 #   cat("             Forecasting\n")
