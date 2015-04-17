@@ -189,11 +189,11 @@ Computational Science Program}
 \begin{center}
 \tikz[nodes={text height=1em, text depth=.2em, draw=black!20, thick, fill=white, font=\small}, rounded corners, semithick]
   \graph[layered layout, level distance = 1cm, sibling sep = 1em]{
-    "Release Plan 1" -> "Explanatory Model";
-    "Release Plan 2" -> "Explanatory Model";
+    "Release Plan 1" -> "Non-explanatory Model";
+    "Release Plan 2" -> "Non-explanatory Model";
     "...." -> "Non-explanatory Model";
-    "Release Plan N" -> "Explanatory Model";
-    "Explanatory Model" -> "Predicted Defects";
+    "Release Plan N" -> "Non-explanatory Model";
+    "Non-explanatory Model" -> "Predicted Defects";
   };
 \caption{A non-explanatory model.}
 \end{center}
