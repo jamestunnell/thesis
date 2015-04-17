@@ -3,32 +3,30 @@
 \beamer@subsectionintoc {1}{1}{Release Planning}{4}{0}{1}
 \beamer@subsectionintoc {1}{2}{Quality Control}{5}{0}{1}
 \beamer@subsectionintoc {1}{3}{Defect Prediction}{7}{0}{1}
-\beamer@subsectionintoc {1}{4}{Related Work: Using Code Analysis}{8}{0}{1}
-\beamer@subsectionintoc {1}{5}{Related Work: Using Historical Information}{9}{0}{1}
-\beamer@sectionintoc {2}{Motivation}{10}{0}{2}
-\beamer@subsectionintoc {2}{1}{Release Plan Optimization}{11}{0}{2}
-\beamer@subsectionintoc {2}{2}{Explanatory Model}{13}{0}{2}
-\beamer@sectionintoc {3}{Time Series}{15}{0}{3}
-\beamer@subsectionintoc {3}{1}{Time Series}{16}{0}{3}
-\beamer@subsectionintoc {3}{2}{Autoregressive Models}{17}{0}{3}
-\beamer@subsectionintoc {3}{3}{Endogeneity and Exogeneity}{19}{0}{3}
-\beamer@subsectionintoc {3}{4}{Stationarity and Trends}{21}{0}{3}
-\beamer@subsectionintoc {3}{5}{Stationarity Testing}{24}{0}{3}
-\beamer@sectionintoc {4}{Modeling Methodology}{26}{0}{4}
-\beamer@subsectionintoc {4}{1}{Overview}{27}{0}{4}
-\beamer@subsectionintoc {4}{2}{Specification \& Estimation}{28}{0}{4}
-\beamer@subsectionintoc {4}{3}{Diagnostic Checking}{29}{0}{4}
-\beamer@subsectionintoc {4}{4}{Model Selection}{30}{0}{4}
-\beamer@sectionintoc {5}{Data Methodology}{31}{0}{5}
-\beamer@subsectionintoc {5}{1}{Data Source}{32}{0}{5}
-\beamer@subsectionintoc {5}{2}{Data Collection}{33}{0}{5}
-\beamer@subsectionintoc {5}{3}{Data Cleansing}{34}{0}{5}
-\beamer@subsectionintoc {5}{4}{Data Preparation}{35}{0}{5}
-\beamer@sectionintoc {6}{Results}{39}{0}{6}
-\beamer@subsectionintoc {6}{1}{Data Methodology}{40}{0}{6}
-\beamer@subsectionintoc {6}{2}{Modeling Methodology}{43}{0}{6}
-\beamer@subsectionintoc {6}{3}{Forecasting}{46}{0}{6}
-\beamer@sectionintoc {7}{Conclusions}{50}{0}{7}
-\beamer@subsectionintoc {7}{1}{Conclusions}{51}{0}{7}
-\beamer@subsectionintoc {7}{2}{Future Work}{52}{0}{7}
-\beamer@sectionintoc {8}{References}{53}{0}{8}
+\beamer@sectionintoc {2}{Motivation}{8}{0}{2}
+\beamer@subsectionintoc {2}{1}{Release Plan Optimization}{9}{0}{2}
+\beamer@subsectionintoc {2}{2}{Explanatory Model}{11}{0}{2}
+\beamer@sectionintoc {3}{Time Series}{13}{0}{3}
+\beamer@subsectionintoc {3}{1}{Time Series}{14}{0}{3}
+\beamer@subsectionintoc {3}{2}{Autoregressive Models}{15}{0}{3}
+\beamer@subsectionintoc {3}{3}{Endogeneity and Exogeneity}{17}{0}{3}
+\beamer@subsectionintoc {3}{4}{Stationarity and Trends}{19}{0}{3}
+\beamer@subsectionintoc {3}{5}{Stationarity Testing}{22}{0}{3}
+\beamer@sectionintoc {4}{Modeling Methodology}{24}{0}{4}
+\beamer@subsectionintoc {4}{1}{Overview}{25}{0}{4}
+\beamer@subsectionintoc {4}{2}{Specification \& Estimation}{26}{0}{4}
+\beamer@subsectionintoc {4}{3}{Diagnostic Checking}{27}{0}{4}
+\beamer@subsectionintoc {4}{4}{Model Selection}{28}{0}{4}
+\beamer@sectionintoc {5}{Data Methodology}{29}{0}{5}
+\beamer@subsectionintoc {5}{1}{Data Source}{30}{0}{5}
+\beamer@subsectionintoc {5}{2}{Data Collection}{31}{0}{5}
+\beamer@subsectionintoc {5}{3}{Data Cleansing}{32}{0}{5}
+\beamer@subsectionintoc {5}{4}{Data Preparation}{33}{0}{5}
+\beamer@sectionintoc {6}{Results}{37}{0}{6}
+\beamer@subsectionintoc {6}{1}{Data Methodology}{38}{0}{6}
+\beamer@subsectionintoc {6}{2}{Modeling Methodology}{41}{0}{6}
+\beamer@subsectionintoc {6}{3}{Forecasting}{44}{0}{6}
+\beamer@sectionintoc {7}{Conclusions}{49}{0}{7}
+\beamer@subsectionintoc {7}{1}{Conclusions}{50}{0}{7}
+\beamer@subsectionintoc {7}{2}{Future Work}{51}{0}{7}
+\beamer@sectionintoc {8}{References}{52}{0}{8}

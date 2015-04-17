@@ -111,39 +111,39 @@ Computational Science Program}
 \end{itemize}
 \end{frame}
 
-\subsection{Related Work: Using Code Analysis}
-
-\begin{frame}[t]
-\frametitle{Defect Prediction using Code Analysis}
-\begin{itemize}
-\item{Approaches using code analysis:
-  \begin{itemize}
-  \item{Akiyama used lines of code (LOC), number of decisions, and the number of subroutine calls \cite{1971_akiyama}}
-  \item{Gafney also used LOC \cite{1984_gaffney_estimating}}
-  \item{Henry and Kafura use information taken from design documents \cite{1984_henry_evaluation}}
-  \item{Nagappan and Ball use relative code churn (lines modified) \cite{2005_nagappan_codechurn}}
-  \end{itemize}
-}
-\item{These approaches all depend on specific design or implementation information}
-\item{This information is not available at the release planning stage}
-\end{itemize}
-\end{frame}
-
-\subsection{Related Work: Using Historical Information}
-
-\begin{frame}[t]
-\frametitle{Defect Prediction using Historical Information}
-\begin{itemize}
-\item{Approaches using historical information:
-  \begin{itemize}
-  \item{Li et al. extrapolate parameters of a regression model \cite{2004_li_emperical_eval}}
-  \item{Singh et al. use an ARIMA time series model \cite{2010_singh_predicting}}
-  \end{itemize}
-}
-\item{Both approaches are non-specific to design or implementation}
-\item{However, neither approach is explanatory}
-\end{itemize}
-\end{frame}
+%\subsection{Related Work: Using Code Analysis}
+%
+%\begin{frame}[t]
+%\frametitle{Defect Prediction using Code Analysis}
+%\begin{itemize}
+%\item{Approaches using code analysis:
+%  \begin{itemize}
+%  \item{Akiyama used lines of code (LOC), number of decisions, and the number of subroutine calls \cite{1971_akiyama}}
+%  \item{Gafney also used LOC \cite{1984_gaffney_estimating}}
+%  \item{Henry and Kafura use information taken from design documents \cite{1984_henry_evaluation}}
+%  \item{Nagappan and Ball use relative code churn (lines modified) \cite{2005_nagappan_codechurn}}
+%  \end{itemize}
+%}
+%\item{These approaches all depend on specific design or implementation information}
+%\item{This information is not available at the release planning stage}
+%\end{itemize}
+%\end{frame}
+%
+%\subsection{Related Work: Using Historical Information}
+%
+%\begin{frame}[t]
+%\frametitle{Defect Prediction using Historical Information}
+%\begin{itemize}
+%\item{Approaches using historical information:
+%  \begin{itemize}
+%  \item{Li et al. extrapolate parameters of a regression model \cite{2004_li_emperical_eval}}
+%  \item{Singh et al. use an ARIMA time series model \cite{2010_singh_predicting}}
+%  \end{itemize}
+%}
+%\item{Both approaches are non-specific to design or implementation}
+%\item{However, neither approach is explanatory}
+%\end{itemize}
+%\end{frame}
 
 \section{Motivation}
 
@@ -191,7 +191,7 @@ Computational Science Program}
   \graph[layered layout, level distance = 1cm, sibling sep = 1em]{
     "Release Plan 1" -> "Explanatory Model";
     "Release Plan 2" -> "Explanatory Model";
-    "...." -> "Explanatory Model";
+    "...." -> "Non-explanatory Model";
     "Release Plan N" -> "Explanatory Model";
     "Explanatory Model" -> "Predicted Defects";
   };
@@ -244,7 +244,7 @@ Computational Science Program}
 \item{A time series is a collection of observations that occur in order}
 \item{The process underlying a time series is assumed to be stochastic (non-deterministic)}
 \item{Each observation might depend on one or more previous observations}
-\item{This dependence is termed autocorrelation}
+\item{This dependence is termed \textit{autocorrelation}}
 \end{itemize}
 \end{frame}
 
@@ -257,7 +257,7 @@ Computational Science Program}
 \item{A white noise term accounts for stochastic fluctuation}
 \item{An $AR(p)$ model for predicting a value X at time t is
 \begin{equation}
-X_t=c+\sum_{i=1}^{p}{\phi_t X_{t-1}+\epsilon_t}
+X_t=c+\sum_{i=1}^{p}{\phi_i X_{t-i}+\epsilon_t}
 \end{equation}
 where $\phi_1, \phi_2, ..., \phi_p$ are the $p$ parameters, $c$ is a constant, and $\epsilon_t$ is the white noise term}
 \end{itemize}
@@ -275,14 +275,20 @@ where $\phi_1, \phi_2, ..., \phi_p$ are the $p$ parameters, $c$ is a constant, a
 
 \begin{frame}[t]
 \frametitle{Endogeneity and Exogeneity}
+
+\large{Endogeneity}
 \begin{itemize}
-\item{Under a VAR model, the behavior of each time series is explained by both
-its own past values and the past values of the other time series}
-\item{This makes the variables endogenous}
-\item{An alternative is that a time series is only used to explain other time series}
-\item{This type of explanatory variable is called exogenous, and could be considered an input}
-\item{Exogenouse variables are not explained by the model}
+\item{Under a VAR model, the behavior of each time series is explained by both its own past values and the past values of the other time series}
+\item{This makes the variables \textit{endogenous}}
 \end{itemize}
+
+\large{Exogeneity}
+\begin{itemize}
+\item{An alternative to this is when a variable is not explained at all by a model}
+\item{Rather, the variable is used to explain other time series}
+\item{This type of explanatory variable is called \textit{exogenous}}
+\end{itemize}
+
 \end{frame}
 
 \begin{frame}[t]
@@ -453,7 +459,7 @@ VARX model}
 \frametitle{Model Selection}
 \begin{itemize}
 \item{Model selection criteria are used to compare models according to their fit}
-\item{penalties for residual error and the number of parameters}
+\item{Penalties for residual error and the number of parameters}
 \item{Some common selection criteria
   \begin{itemize}
   \item{Akaike Information Criterion (AIC)}
@@ -785,8 +791,14 @@ p_{max} = \left \lfloor \frac{78}{(3)(4)} \right \rfloor = \lfloor 6.5 \rfloor =
 \begin{frame}[t]{Forecasting Results (cont'd)}
 \begin{itemize}
 \item{Low accuracy for the predictions is concerning}
-\item{For the next window, $W_{80−157}$, the actual number of future bugs was 17}
+\item{For the next window, $W_{80-157}$, the actual number of future bugs was 17}
 \item{This was inside the 90\% confidence interval, which spanned from 13.38 to 18.00}
+\item{This result conflicts with that of the previous window}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Sliding Window Forecasts}
+\begin{itemize}
 \item{How useful is the VARX model in general, considering these conflicting results?}
 \item{To find out, a sliding 78-week window was used}
 \item{The sliding window started at the first sample period, and was shifted by one sample period after modeling}
@@ -794,7 +806,7 @@ p_{max} = \left \lfloor \frac{78}{(3)(4)} \right \rfloor = \lfloor 6.5 \rfloor =
 \end{itemize}
 \end{frame}
 
-\begin{frame}[t]{Sliding Window Results}
+\begin{frame}[t]{Sliding Window Forecasts (cont'd)}
 \footnotesize{
 \begin{itemize}
 \item{Errors between the mean forecasted and actual number of bugs is shown as a histogram}
