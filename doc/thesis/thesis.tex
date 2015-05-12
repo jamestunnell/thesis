@@ -133,6 +133,12 @@
 %\includeonly{front,introduction}
 
 \begin{document}
+\makeatletter
+\renewcommand{\appendixname}{APPENDIX}
+\renewcommand{\chaptername}{CHAPTER}
+\renewcommand{\thechapter}{\Roman{chapter}}
+\def\@@makechapterhead#1{\uppercase{\@chapapp~\thechapter\\~\\#1}}
+\makeatother
 
 % Start a new volume for your thesis.
 % All theses must have at least one volume.
