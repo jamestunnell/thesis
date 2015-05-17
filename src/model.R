@@ -26,10 +26,16 @@ library(docopt)
 opts <- docopt(doc) # retrieve the command-line arguments
 # opts <- list(
 #   ISSUES_FILE = "~/projects/thesis/data/mongodb/issues.txt",
-#   outdir = "~/projects/thesis",
-#   period = "30",
+#   periods = "30",
 #   ndiffs = "1",
-#   window = "20"
+#   windows = "20",
+#   normsignif = "0.05",
+#   levels = "75,90",
+#   install = F,
+#   outdir = NULL,
+#   start.date = NULL,
+#   end.date = NULL,
+#   verbose = FALSE
 # )
 
 issues.file = opts$ISSUES_FILE
@@ -51,7 +57,7 @@ if(opts$install){
 }
 library(defectPrediction)
 
-cat("period","w.size","ndiff", paste(levels, "conf"),"\n", sep="\t")
+cat("period","w.size","ndiff","nwind","nnval","nnnorm","RMSE",paste(levels, "conf"),"\n", sep="\t")
 for(period in periods){
   for(ndiff in ndiffs){
     pre.results <- pre.modeling(issues.file = opts$ISSUES_FILE,
@@ -63,7 +69,9 @@ for(period in periods){
         conf.levels = levels, ndiff = ndiff, normality.signif = normality.signif,
         out.dir = opts$outdir, verbose = verbose)
       p.inconf <- as.numeric(results$n.inconf / (results$n.inconf + results$n.outconf))
-      cat(period, w.size, ndiff, p.inconf, "\n", sep="\t")
+      rmse <- sqrt(mean(results$fc.errs^2))
+      cat(period, w.size, ndiff, results$n.windows, results$n.nonevalid, 
+          results$n.nonnormal, round(rmse,4), round(p.inconf,4), "\n", sep="\t")
     }
   }
 }

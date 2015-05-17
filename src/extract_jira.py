@@ -6,7 +6,7 @@ For each issue, the following information will appear in the table: type,
 priority, and days to resolve.
 
 Usage:
-    extract.py INPUT_GLOB OUTPUT_FILE [options]
+    extract_jira.py INPUT_GLOB OUTPUT_FILE [options]
 
 Arguments:
     INPUT_GLOB A glob string, used to find input file(s)
