@@ -20,6 +20,7 @@ options:
 --verbose       Enable verbose mode
 --startdate=S   Date to start time series
 --enddate=E     Date to end time series
+--forcediff     Force the time series data to be differenced, whether it is stationary or not
 ' -> doc
 
 library(docopt)
@@ -63,7 +64,9 @@ for(period in periods){
     pre.results <- pre.modeling(issues.file = opts$ISSUES_FILE,
       sampling.period = period, ndiff = ndiff, out.dir = opts$out.dir,
       start.date = start.date, end.date = end.date)
-    ndiff <- pre.results$ndiff
+    if(!opts$forcediff){
+      ndiff <- pre.results$ndiff
+    }
     for(w.size in w.sizes){
       results <- model.regime(pre.results$ts, window.size = w.size, 
         conf.levels = levels, ndiff = ndiff, normality.signif = normality.signif,
