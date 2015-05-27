@@ -58,9 +58,27 @@ if(opts$install){
 }
 library(defectPrediction)
 
-cat("period","w.size","ndiff","nwind","nnval","nnnorm","RMSE",paste(levels, "conf"),"\n", sep="\t")
-for(period in periods){
+plot.metric <- function(the.list, name, ndiffs, w.sizes, out.dir){
+  png(filename = file.path(out.dir, paste0(name, ".png"))
+  plot(NULL, xlim = range(w.sizes), ylim = range(the.list))
   for(ndiff in ndiffs){
+    lines(w.sizes, the.list[[as.character(ndiff)]])
+  }
+  garbage <- dev.off()
+}
+
+cat("period","w.size","ndiff","nwind","p.nval","p.nnorm","RMSE",paste(levels, "conf"),"\n", sep="\t")
+for(period in periods){
+  p.nonevalid.l <- list()
+  p.nonnormal.l <- list()
+  rsme.l <- list()
+  
+  for(ndiff in ndiffs){
+    
+    p.nonevalid.v <- NULL
+    p.nonnormal.v <- NULL
+    rsme.v <- NULL
+    
     pre.results <- pre.modeling(issues.file = opts$ISSUES_FILE,
       sampling.period = period, ndiff = ndiff, out.dir = opts$out.dir,
       start.date = start.date, end.date = end.date)
@@ -68,14 +86,34 @@ for(period in periods){
       ndiff <- pre.results$ndiff
     }
     for(w.size in w.sizes){
-      results <- model.regime(pre.results$ts, window.size = w.size, 
-        conf.levels = levels, ndiff = ndiff, normality.signif = normality.signif,
-        out.dir = opts$outdir, verbose = verbose)
+      results <- model.regime(pre.results$ts, window.size = w.size, conf.levels = levels,
+        ndiff = ndiff, normality.signif = normality.signif, verbose = verbose)
+      
+      p.nonevalid <- results$n.nonevalid / results$n.windows
+      p.nonnormal <- results$n.nonnormal / (results$n.windows - results$n.nonevalid)
       p.inconf <- as.numeric(results$n.inconf / (results$n.inconf + results$n.outconf))
       rmse <- sqrt(mean(results$fc.errs^2))
-      cat(period, w.size, ndiff, results$n.windows, results$n.nonevalid, 
-          results$n.nonnormal, round(rmse,4), round(p.inconf,4), "\n", sep="\t")
+      
+      p.nonevalid.v <- append(p.nonevalid.v, p.nonevalid)
+      p.nonnormal.v <- append(p.nonnormal.v, p.nonnormal)
+      rsme.v <- append(rsme.v, rsme)
+      
+      cat(period, w.size, ndiff, results$n.windows, p.nonevalid, 
+          p.nonnormal, round(rmse,4), round(p.inconf,4), "\n", sep="\t")
     }
+    
+    p.none.valid.l[[as.character(ndiff)]] <- p.none.valid.v
+    p.non.normal.l[[as.character(ndiff)]] <- p.non.normal.v
+    rsme.l[[as.character(ndiff)]] <- rsme.v
+  }
+  
+  if(!is.null(out.dir)){
+    plot.metric(p.nonevalid.l, w.sizes = w.sizes, ndiffs = ndiffs, 
+                name = "p.nonevalid", out.dir = out.dir)    
+    plot.metric(p.nonnormal.l, w.sizes = w.sizes, ndiffs = ndiffs, 
+                name = "p.nonnormal", out.dir = out.dir)
+    plot.metric(rsme.l, w.sizes = w.sizes, ndiffs = ndiffs, 
+                name = "RSME", out.dir = out.dir)
   }
 }
 # 
