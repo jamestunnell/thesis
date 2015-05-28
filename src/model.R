@@ -15,7 +15,6 @@ options:
 --ndiffs=D      # of differences to take, for non-stationary time series data [default: 1,2]
 --windows=W     Sample window size [default: 24,36,48]
 --normsignif=N  Alpha level to use in normality test of model residuals [default: 0.05]
---levels=L      Confidence levels (1-99), for forecast testing [default: 75,90]
 --install       Before execution, install defectPrediction package from GitHub
 --verbose       Enable verbose mode
 --startdate=S   Date to start time series
@@ -26,14 +25,14 @@ options:
 library(docopt)
 opts <- docopt(doc) # retrieve the command-line arguments
 # opts <- list(
-#   ISSUES_FILE = "C:/Users/James/thesis/data/mongodb_coreserver_issues.txt",
+#   ISSUES_FILE = "~/projects/thesis/data/mongodb_coreserver_issues.txt",
 #   periods = "30",
 #   ndiffs = "1,2",
 #   windows = "12,15,18,21,24,27,30",
 #   normsignif = "0.05",
-#   levels = "75,90",
+#   #levels = "75,90",
 #   install = F,
-#   outdir = "C:/Users/James/thesis/runs",
+#   outdir = "~/projects/thesis/runs",
 #   start.date = NULL,
 #   end.date = NULL,
 #   verbose = F,
@@ -44,7 +43,7 @@ issues.file = opts$ISSUES_FILE
 periods = as.integer(unlist(strsplit(opts$period, split=",")))
 w.sizes <- as.integer(unlist(strsplit(opts$window, split=",")))
 ndiffs <- as.integer(unlist(strsplit(opts$ndiffs, split=",")))
-levels <- as.integer(unlist(strsplit(opts$levels, split=",")))
+levels <- c(75,90) #as.integer(unlist(strsplit(opts$levels, split=",")))
 out.dir <- opts$outdir
 verbose <- opts$verbose
 start.date <- opts$startdate
@@ -76,15 +75,19 @@ for(period in periods){
   p.nonevalid.l <- list()
   p.nonnormal.l <- list()
   rmse.l <- list()
+  p.inconf.ninety.l <- list()
+  p.inconf.seventyfive.l <- list()
   
   for(ndiff in ndiffs){
     
     p.nonevalid.v <- NULL
     p.nonnormal.v <- NULL
     rmse.v <- NULL
+    p.inconf.ninety.v <- NULL
+    p.inconf.seventyfive.v <- NULL
     
     pre.results <- pre.modeling(issues.file = opts$ISSUES_FILE,
-      sampling.period = period, ndiff = ndiff, out.dir = opts$out.dir,
+      sampling.period = period, out.dir = out.dir,
       start.date = start.date, end.date = end.date)
     if(!opts$forcediff){
       ndiff <- pre.results$ndiff
@@ -101,14 +104,19 @@ for(period in periods){
       p.nonevalid.v <- append(p.nonevalid.v, p.nonevalid)
       p.nonnormal.v <- append(p.nonnormal.v, p.nonnormal)
       rmse.v <- append(rmse.v, rmse)
+      p.inconf.ninety.v <- append(p.inconf.ninety.v, p.inconf[1])
+      p.inconf.seventyfive.v <- append(p.inconf.seventyfive.v, p.inconf[2])
       
       cat(period, w.size, ndiff, results$n.windows, round(p.nonevalid, 4), 
           round(p.nonnormal,4), round(rmse,4), round(p.inconf,4), "\n", sep="\t")
     }
     
-    p.nonevalid.l[[as.character(ndiff)]] <- p.nonevalid.v
-    p.nonnormal.l[[as.character(ndiff)]] <- p.nonnormal.v
-    rmse.l[[as.character(ndiff)]] <- rmse.v
+    key <- as.character(ndiff)
+    p.nonevalid.l[[key]] <- p.nonevalid.v
+    p.nonnormal.l[[key]] <- p.nonnormal.v
+    rmse.l[[key]] <- rmse.v
+    p.inconf.ninety.l[[key]] <- p.inconf.ninety.v
+    p.inconf.seventyfive.l[[key]] <- p.inconf.seventyfive.v
   }
   
   if(!is.null(out.dir)){
@@ -118,6 +126,10 @@ for(period in periods){
                 name = "p.nonnormal", out.dir = out.dir)
     plot.metric(rmse.l, w.sizes = w.sizes, ndiffs = ndiffs, period = period, 
                 name = "rmse", out.dir = out.dir)
+    plot.metric(p.inconf.ninety.l, w.sizes = w.sizes, ndiffs = ndiffs, period = period, 
+                name = "90pct.conf", out.dir = out.dir)
+    plot.metric(p.inconf.seventyfive.l, w.sizes = w.sizes, ndiffs = ndiffs, period = period, 
+                name = "75pct.conf", out.dir = out.dir)
   }
 }
 # 

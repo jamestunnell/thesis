@@ -15,10 +15,10 @@ raise "Could not find base data directory: #{DATA_BASE_DIR}" unless Dir.exists?(
 raise "Could not find base output directory: #{OUT_BASE_DIR}" unless Dir.exists?(OUT_BASE_DIR)
 
 {
-  "mongodb_coreserver_issues.txt" => { },
-  "hibernate_orm_issues.txt" => { },
-  "netbeans_java_issues.txt" => { :startdate => "2001-01-01" },
-  "netbeans_platform_issues.txt" => { :startdate => "2001-01-01" },
+  "mongodb_coreserver_issues.txt" => { :outdir => "mongodb/" },
+  "hibernate_orm_issues.txt" => { :outdir => "hibernate/"},
+  "netbeans_java_issues.txt" => { :startdate => "2001-01-01", :outdir => "netbeans/java/" },
+  "netbeans_platform_issues.txt" => { :startdate => "2001-01-01", :outdir => "netbeans/platform/" },
 }.each do |issues_file, opts|
   issues_path = File.join(DATA_BASE_DIR, issues_file)
   raise "Could not find issues file #{issues_path}" unless File.exists?(issues_path)
@@ -32,12 +32,15 @@ raise "Could not find base output directory: #{OUT_BASE_DIR}" unless Dir.exists?
     # end
     # Dir.mkdir(out_path)
     
-    log_path = File.join(OUT_BASE_DIR, "log_#{issues_file}_#{period}.txt")
     options = "--periods=#{period} --windows=#{windows.join(",")} --ndiffs=0,1,2 --forcediff"
 
     if opts.has_key?(:outdir)
-      out_path = File.join(OUT_BASE_DIR, "#{outdir}_#{period}")
+      out_path = File.join(OUT_BASE_DIR, "#{opts[:outdir]}")
       options += " --outdir=\"#{out_path}\""
+
+      log_path = File.join(OUT_BASE_DIR, opts[:outdir], "log_#{issues_file}_#{period}.txt")
+    else
+      log_path = File.join(OUT_BASE_DIR, "log_#{issues_file}_#{period}.txt")
     end
 
     if opts.has_key?(:startdate)
@@ -45,6 +48,7 @@ raise "Could not find base output directory: #{OUT_BASE_DIR}" unless Dir.exists?
     end
 
     cmd_line = "#{EXE_PATH} #{issues_path} #{options}"
+
     File.open(log_path, "w") do |f|
       Open3.popen3(cmd_line) do |stdin, stdout, stderr, wait_thr|
         while line = stdout.gets
