@@ -25,14 +25,14 @@ options:
 library(docopt)
 opts <- docopt(doc) # retrieve the command-line arguments
 # opts <- list(
-#   ISSUES_FILE = "~/projects/thesis/data/mongodb_coreserver_issues.txt",
+#   ISSUES_FILE = "C:/Users/James/thesis/data/mongodb_coreserver_issues.txt",
 #   periods = "30",
-#   ndiffs = "1,2",
+#   ndiffs = "0,1,2",
 #   windows = "12,15,18,21,24,27,30",
 #   normsignif = "0.05",
 #   #levels = "75,90",
 #   install = F,
-#   outdir = "~/projects/thesis/runs",
+#   outdir = "C:/Users/James/thesis/runs",
 #   start.date = NULL,
 #   end.date = NULL,
 #   verbose = F,
@@ -58,15 +58,22 @@ if(opts$install){
 }
 library(defectPrediction)
 
-plot.metric <- function(the.list, name, period, ndiffs, w.sizes, out.dir){
-  plot.colors <- rainbow(length(ndiffs))
+plot.metric <- function(the.list, period, ndiffs, w.sizes, 
+                        fname.base, ylab, title = "", out.dir){
+  n <- length(ndiffs)
+  plot.colors <- rainbow(n)
+  fname <- file.path(out.dir, paste0(fname.base, "_", period, ".eps"))
   
-  png(filename = file.path(out.dir, paste0(name, "_", period, ".png")))
-  plot(NULL, xlim = range(w.sizes), ylim = range(the.list), xlab = "window size", ylab = name)
-  for(i in 1:length(ndiffs)){
+  postscript(file = fname, , width=8, height=6,
+             onefile=TRUE, horizontal=FALSE, colormodel = "rgb", 
+             family = "Times", pointsize = 16)
+  plot(NULL, xlim = range(w.sizes), ylim = range(the.list),
+       xlab = "Window size", ylab = ylab, main = title)
+  for(i in 1:n){
     ndiff <- ndiffs[i]
     lines(w.sizes, the.list[[as.character(ndiff)]], col = plot.colors[i])
   }
+  legend("right", legend = paste(as.character(ndiffs),"diff"), lty = rep(1,n), col=plot.colors)
   garbage <- dev.off()
 }
 
@@ -121,15 +128,20 @@ for(period in periods){
   
   if(!is.null(out.dir)){
     plot.metric(p.nonevalid.l, w.sizes = w.sizes, ndiffs = ndiffs, period = period, 
-                name = "p.nonevalid", out.dir = out.dir)    
+                fname.base = "p.nonevalid", ylab = "Proportion",
+                title = "Proportion with no valid model", out.dir = out.dir)    
     plot.metric(p.nonnormal.l, w.sizes = w.sizes, ndiffs = ndiffs, period = period, 
-                name = "p.nonnormal", out.dir = out.dir)
+                fname.base = "p.nonnormal", ylab = "Proportion", 
+                title = "Proportion with non-normal residuals", out.dir = out.dir)
     plot.metric(rmse.l, w.sizes = w.sizes, ndiffs = ndiffs, period = period, 
-                name = "rmse", out.dir = out.dir)
+                fname.base = "rmse", ylab = "RMSE", 
+                title = "", out.dir = out.dir)
     plot.metric(p.inconf.ninety.l, w.sizes = w.sizes, ndiffs = ndiffs, period = period, 
-                name = "90pct.conf", out.dir = out.dir)
+                fname.base = "90pct.conf", ylab = "Proportion", 
+                title = "Proportion within 90% prediction interval", out.dir = out.dir)
     plot.metric(p.inconf.seventyfive.l, w.sizes = w.sizes, ndiffs = ndiffs, period = period, 
-                name = "75pct.conf", out.dir = out.dir)
+                fname.base = "75pct.conf", ylab = "Proportion", 
+                title = "Proportion within 75% prediction interval", out.dir = out.dir)
   }
 }
 # 
