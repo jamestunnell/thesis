@@ -20,6 +20,7 @@ options:
 --startdate=S   Date to start time series
 --enddate=E     Date to end time series
 --forcediff     Force the time series data to be differenced, whether it is stationary or not
+--kmin=K        The minimum ratio of observations to model parameters [default: 4]
 ' -> doc
 
 library(docopt)
@@ -49,6 +50,7 @@ verbose <- opts$verbose
 start.date <- opts$startdate
 end.date <- opts$enddate
 normality.signif <- as.numeric(opts$normsignif)
+K.min <- as.numeric(opts$kmin)
 
 levels <- rev(sort(levels))
 
@@ -100,7 +102,7 @@ for(period in periods){
       ndiff <- pre.results$ndiff
     }
     for(w.size in w.sizes){
-      results <- model.regime(pre.results$ts, window.size = w.size, conf.levels = levels,
+      results <- model.regime(pre.results$ts, window.size = w.size, conf.levels = levels, K.min = K.min,
         ndiff = ndiff, normality.signif = normality.signif, verbose = verbose)
       
       p.nonevalid <- results$n.nonevalid / results$n.windows
@@ -135,7 +137,7 @@ for(period in periods){
                 title = "Proportion with non-normal residuals", out.dir = out.dir)
     plot.metric(rmse.l, w.sizes = w.sizes, ndiffs = ndiffs, period = period, 
                 fname.base = "rmse", ylab = "RMSE", 
-                title = "", out.dir = out.dir)
+                title = "RMSE of Forecast Errors", out.dir = out.dir)
     plot.metric(p.inconf.ninety.l, w.sizes = w.sizes, ndiffs = ndiffs, period = period, 
                 fname.base = "90pct.conf", ylab = "Proportion", 
                 title = "Proportion within 90% prediction interval", out.dir = out.dir)
