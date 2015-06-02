@@ -40,6 +40,12 @@ opts <- docopt(doc) # retrieve the command-line arguments
 #   forcediff = T
 # )
 
+if(opts$install){
+  library(devtools)
+  install_github("jamestunnell/defectPrediction")  
+}
+library(defectPrediction)
+
 issues.file = opts$ISSUES_FILE
 periods = as.integer(unlist(strsplit(opts$period, split=",")))
 w.sizes <- as.integer(unlist(strsplit(opts$window, split=",")))
@@ -53,12 +59,6 @@ normality.signif <- as.numeric(opts$normsignif)
 K.min <- as.numeric(opts$kmin)
 
 levels <- rev(sort(levels))
-
-if(opts$install){
-  library(devtools)
-  install_github("jamestunnell/defectPrediction")  
-}
-library(defectPrediction)
 
 plot.metric <- function(the.list, period, ndiffs, w.sizes, 
                         fname.base, ylab, title = "", out.dir){
@@ -103,7 +103,7 @@ for(period in periods){
     }
     for(w.size in w.sizes){
       results <- model.regime(pre.results$ts, window.size = w.size, conf.levels = levels, K.min = K.min,
-        ndiff = ndiff, normality.signif = normality.signif, verbose = verbose)
+        ndiff = ndiff, normality.signif = normality.signif, verbose = verbose, out.dir = out.dir)
       
       p.nonevalid <- results$n.nonevalid / results$n.windows
       p.nonnormal <- results$n.nonnormal / (results$n.windows - results$n.nonevalid)
