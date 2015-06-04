@@ -8,7 +8,7 @@ PERIOD_WINDOWS = {
 
 THESIS_DIR = "/home/james/projects/thesis/"
 DATA_BASE_DIR = File.join(THESIS_DIR,"data")
-OUT_BASE_DIR = File.join(THESIS_DIR,"runs")
+OUT_BASE_DIR = File.join(THESIS_DIR,"runs/exploratory")
 EXE_PATH = File.join(THESIS_DIR,"src","model.R")
 
 raise "Could not find base data directory: #{DATA_BASE_DIR}" unless Dir.exists?(DATA_BASE_DIR)

@@ -21,6 +21,7 @@ options:
 --enddate=E     Date to end time series
 --forcediff     Force the time series data to be differenced, whether it is stationary or not
 --kmin=K        The minimum ratio of observations to model parameters [default: 4]
+--extra         Write extra files
 ' -> doc
 
 library(docopt)
@@ -37,7 +38,8 @@ opts <- docopt(doc) # retrieve the command-line arguments
 #   start.date = NULL,
 #   end.date = NULL,
 #   verbose = F,
-#   forcediff = T
+#   forcediff = T,
+#   extra = F
 # )
 
 if(opts$install){
@@ -57,6 +59,7 @@ start.date <- opts$startdate
 end.date <- opts$enddate
 normality.signif <- as.numeric(opts$normsignif)
 K.min <- as.numeric(opts$kmin)
+write.extra <- opts$extra
 
 levels <- rev(sort(levels))
 
@@ -102,8 +105,9 @@ for(period in periods){
       ndiff <- pre.results$ndiff
     }
     for(w.size in w.sizes){
-      results <- model.regime(pre.results$ts, window.size = w.size, conf.levels = levels, K.min = K.min,
-        ndiff = ndiff, normality.signif = normality.signif, verbose = verbose, out.dir = out.dir)
+      results <- model.regime(pre.results$ts, window.size = w.size, conf.levels = levels,
+        K.min = K.min, ndiff = ndiff, normality.signif = normality.signif,
+        verbose = verbose, out.dir = out.dir, write.extra = write.extra)
       
       p.nonevalid <- results$n.nonevalid / results$n.windows
       p.nonnormal <- results$n.nonnormal / (results$n.windows - results$n.nonevalid)

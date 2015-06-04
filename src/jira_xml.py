@@ -14,9 +14,9 @@ RESOLUTIONS = { -1:"unresolved", 1: "fixed", 2:"wontfix", 3:"duplicate",
 
 class Issue:
     def __init__(self, item_xml, type_map):
-        self.type_map = type_map
         self.key = read_key(item_xml)
         self.type = read_type(item_xml)
+        self.type_str = type_map[self.type]
         self.priority = read_priority(item_xml)
         self.created  = read_created(item_xml)
         self.resolved  = read_resolved(item_xml)
@@ -25,20 +25,20 @@ class Issue:
         self.subtasks = read_subtasks(item_xml)
         self.fixversion = read_fixversion(item_xml)
         
-    def type_str(self):
-        if(not self.type in self.type_map):
-            print("Type id %d not found" % self.type)
-        return self.type_map[self.type]
+#    def type_str(self):
+#        if(not self.type in self.type_map):
+#            print("Type id %d not found" % self.type)
+#        return self.type_map[self.type]
         
-    def status_str(self):
-        if(not self.status in STATUSES):
-            print("Status id %d not found" % self.status)
-        return STATUSES[self.status]
-        
-    def resolution_str(self):
-        if(not self.resolution in RESOLUTIONS):
-            print("Resolution id %d not found" % self.resolution)
-        return RESOLUTIONS[self.resolution]        
+#    def status_str(self):
+#        if(not self.status in STATUSES):
+#            print("Status id %d not found" % self.status)
+#        return STATUSES[self.status]
+#        
+#    def resolution_str(self):
+#        if(not self.resolution in RESOLUTIONS):
+#            print("Resolution id %d not found" % self.resolution)
+#        return RESOLUTIONS[self.resolution]        
     
     def isfixed(self):
         return self.resolution == RESOLUTION_FIXED or \

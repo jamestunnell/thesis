@@ -52,35 +52,32 @@ fixings_by_bug = Hash[
   fixings.map {|activity| [activity[:bug_id], activity]}
 ]
 
-nfixed = 0
 bugs_by_prod = {}
 DB[:bugs].each do |bug|
-  if bug[:resolution] == "FIXED"
-    prod_id = bug[:product_id]
-    if bugs_by_prod.has_key? prod_id
-      bugs_by_prod[prod_id].push bug
-    else
-      bugs_by_prod[prod_id] = [bug]
-    end
-    nfixed += 1
+  prod_id = bug[:product_id]
+  if bugs_by_prod.has_key? prod_id
+    bugs_by_prod[prod_id].push bug
+  else
+    bugs_by_prod[prod_id] = [bug]
   end
 end
-puts "Found #{nfixed} fixed issues"
 
 HEADER = ["type","priority","created","resolved","fixversion","product","component"]
 
 require 'csv'
 
-fixtimes_notfound = 0
-
 bugs_by_prod.each do |prod_id,bugs|
   puts "Writing table for #{bugs.size} bugs that have product id #{prod_id}"
   fname = File.join(OUTDIR, "prod_#{prod_id}_#{bugs.size}_bugs.txt")
   CSV.open(fname, 'wb', :headers => HEADER, :col_sep => " ", :write_headers => true) do |csv|
+    nunfixed = nfixed = fixtimes_notfound = 0
+
     bugs.each do |bug|
       fixing = fixings_by_bug[bug[:bug_id]]
 
-      if fixing
+      if bug[:resolution] == "FIXED" && fixing
+        nfixed += 1
+
         type = case bug[:cf_bug_type]
         when "DEFECT" then "bug"
         when "ENHANCEMENT" then "improvement"
@@ -98,9 +95,14 @@ bugs_by_prod.each do |prod_id,bugs|
         csv << [type,pri,created,resolved,ver,prod,component]
       else
         #puts "Could not find fixing for bug #{bug[:bug_id]}"
-        fixtimes_notfound += 1
+        nunfixed += 1
       end
     end
+
+    ntotal = nfixed + nunfixed
+    pct_unfixed = (100 * nunfixed / ntotal.to_f).round
+    puts "Found #{nfixed} fixed issues"
+    puts "Passed over #{nunfixed} (#{pct_unfixed}%) unfixed issues"
+    puts ""
   end
 end
-puts "Fix times were not found for #{fixtimes_notfound} issues"

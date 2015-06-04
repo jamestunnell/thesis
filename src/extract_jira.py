@@ -50,9 +50,6 @@ if(args["hibernate"]):
     print("Extracting from Hibernate JIRA project")
     type_map = HIBERNATE_TYPES
 
-type_subtask = type_map.keys()[type_map.values().index("subtask")]
-print("sub-task type is %d" % type_subtask)
-
 issues = []
 for i in range(n):
     in_fname = in_fnames[i]
@@ -63,34 +60,47 @@ for i in range(n):
 issues = dict([[i.key,i] for i in issues])
 
 # for tasks with sub-tasks: if it can be found, covert it to same type as parent
-converted = {}
 for issue in issues.values():
     for subtask_key in issue.subtasks:
         if subtask_key in issues:
-            if issue.type in converted:
-                converted[issue.type] += 1
-            else:
-                converted[issue.type] = 1
             issues[subtask_key].type = issue.type
-print("Conversions: %s" % converted)
 
-# remaining subtasks are tossed out
+# convert tasks to improvements
+nconverted = 0
+for issue in issues.values():
+    if issue.type_str == "task":
+        issue.type = type_map.keys()[type_map.values().index("improvement")]
+        issue.type_str = "improvement"
+        nconverted += 1
+print("Converted %d tasks to improvements" % nconverted)
+
+# Toss out questions
+for key, issue in issues.items():
+    if issue.type_str == "question":
+        issues.pop(key)
+
+print("%d issues at this point" % len(issues))
+
+# Toss out unfixed issues and any remaining subtasks
 nunfixed = 0
-nsubtasks = 0
+norphaned = 0
+type_subtask = type_map.keys()[type_map.values().index("subtask")]
 for key, issue in issues.items():
     if not issue.isfixed():
         issues.pop(key)
         nunfixed += 1
     elif issue.type == type_subtask:
         issues.pop(key)
-        nsubtasks += 1
+        norphaned += 1
 print("Tossed out %d unfixed" % nunfixed)
-print("Tossed out %d orphaned sub-tasks" % nsubtasks)
+print("Tossed out %d orphaned sub-tasks" % norphaned)
+
+print("%d issues remaining" % len(issues))
 
 header = ["type","priority","created","resolved","fixversion"]
 rows = []
 for i in issues.values():
-    rows.append((i.type_str(), i.priority, i.created, i.resolved, i.fixversion))
+    rows.append((i.type_str, i.priority, i.created, i.resolved, i.fixversion))
 
 import csv
 with file(out_fname, 'wb') as csvfile:
