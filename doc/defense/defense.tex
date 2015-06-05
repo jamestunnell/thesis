@@ -6,7 +6,7 @@
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{graphicx}
-\usepackage{subfig}
+\usepackage{subfigure}
 \usepackage{multicol}
 \usepackage[font={footnotesize,it}]{caption}
 
@@ -236,71 +236,6 @@ Computational Science Program}
 \end{frame}
 
 
-\subsection{Time Series}
-
-\begin{frame}[t]
-\frametitle{Time Series }
-\begin{itemize}
-\item{A time series is a collection of observations that occur in order}
-\item{The process underlying a time series is assumed to be stochastic (non-deterministic)}
-\item{Each observation might depend on one or more previous observations}
-\item{This dependence is termed \textit{autocorrelation}}
-\end{itemize}
-\end{frame}
-
-\subsection{Autoregressive Models}
-
-\begin{frame}[t]
-\frametitle{Autoregressive Models}
-\begin{itemize}
-\item{A basic autoregressive (AR) model is a linear combination of previous values}
-\item{A white noise term accounts for stochastic fluctuation}
-\item{An $AR(p)$ model for predicting a value X at time t is
-\begin{equation}
-X_t=c+\sum_{i=1}^{p}{\phi_i X_{t-i}+\epsilon_t}
-\end{equation}
-where $\phi_1, \phi_2, ..., \phi_p$ are the $p$ parameters, $c$ is a constant, and $\epsilon_t$ is the white noise term}
-\end{itemize}
-\end{frame}
-
-\begin{frame}[t]
-\frametitle{Autoregressive Models (cont'd)}
-\begin{itemize}
-\item{Extending the AR model to be multivariate results in a Vector AR (VAR) model}
-\item{This model can support time series for defect count, improvements, and new features}
-\end{itemize}
-\end{frame}
-
-\subsection{Endogeneity and Exogeneity}
-
-\begin{frame}[t]
-\frametitle{Endogeneity and Exogeneity}
-
-\large{Endogeneity}
-\begin{itemize}
-\item{Under a VAR model, the behavior of each time series is explained by both its own past values and the past values of the other time series}
-\item{This makes the variables \textit{endogenous}}
-\end{itemize}
-
-\large{Exogeneity}
-\begin{itemize}
-\item{An alternative to this is when a variable is not explained at all by a model}
-\item{Rather, the variable is used to explain other time series}
-\item{This type of explanatory variable is called \textit{exogenous}}
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}[t]
-\frametitle{Endogeneity and Exogeneity (cont'd)}
-\begin{itemize}
-\item{The desired model does not need to explain features and improvements}
-\item{Instead, these are used to explain defects}
-\item{Planned features and improvements can be made exogenous}
-\item{By also considering exogenous variables, a VAR model would become a
-VARX model}
-\end{itemize}
-\end{frame}
 
 \subsection{Stationarity and Trends}
 
@@ -383,20 +318,20 @@ VARX model}
 }
 \end{frame}
 
-\section{Modeling Methodology}
+\section{Modeling Methods}
 
 \begin{frame}
 \begin{center}
-\Large{Modeling Methodology}
+\Large{Modeling Methods}
 \end{center}
 \end{frame}
 
 \subsection{Overview}
 
 \begin{frame}[t]
-\frametitle{Time Series Modeling Methodology}
+\frametitle{Time Series Modeling Methods}
 \begin{itemize}
-\item{Time series modeling methodology typically involves
+\item{Time series modeling methods typically involves
   \begin{enumerate}
   \item{Specification}
   \item{Estimation}
@@ -472,17 +407,17 @@ VARX model}
 \end{itemize}
 \end{frame}
 
-\section{Data Methodology}
+\section{Data Methods}
 
 \begin{frame}
 \begin{center}
-\Large{Data Methodology}
+\Large{Data Methods}
 \end{center}
 \end{frame}
 
 \note{In this section, the data source and data collection method are detailed. Then, the method of preparing data for the modeling phase is presented.}
 
-\subsection{Data Source}
+\subsection{Data Sources}
 
 \begin{frame}[t]
 \frametitle{Data source}
@@ -490,28 +425,51 @@ VARX model}
 \item{Data for time series modeling will be derived from project historical data}
 \item{This historical data can be found in the project issue tracking system (ITS)}
 \item{The issues in an ITS can be bugs, features, improvements, etc.}
-\item{The \textit{MongoDB} software project was selected to try out the modeling methodology
+\item{The basis for project selection is
 \begin{itemize}
-\item{The project has been actively developed since 2009}
-\item{Data from versions 0.9.3 through 3.0.0-rc6 are used}
-\item{This dataset contained $7042$ issues}
-\end{itemize}
-}
+\item
+Has been actively developed for at least several years
+\item
+Has openly available issue tracking system data
+\item
+Distinguishes between defects and other issue types
+\end{itemize}}
 \end{itemize}
 \end{frame}
 
-\subsection{Data Collection}
+\begin{frame}[t]
+\frametitle{Selected Projects}
+MongoDB
+\begin{itemize}
+\item{A NoSQL, document-oriented database}
+\item{The project has been actively developed since 2009}
+\item{The \textit{core server} sub-project was chosen for modeling}
+\item{Uses JIRA for issue tracking}
+\item{Issue data was exported as XML}
+\end{itemize}
+\end{frame}
 
 \begin{frame}[t]
-\frametitle{Data Collection}
+\frametitle{Selected Projects (cont'd)}
+Hibernate
 \begin{itemize}
-\item{\textit{MongoDB} uses \textit{JIRA} for issue tracking and project management}
-\item{Issue data was exported from the project's JIRA web interface as XML data}
-\item{Issue data was extracted from the XML, and the following fields were kept:
-  \begin{itemize}
-  \item{Creation date}\item{Resolution date}\item{Type}\item{Priority}
-  \end{itemize}
-}
+\item{An object-relational mapping (ORM) framework}
+\item{The project has been actively developed since 2003}
+\item{The \textit{orm} sub-project was chosen for modeling}
+\item{Uses JIRA for issue tracking}
+\item{Issue data was exported as XML}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]
+\frametitle{Selected Projects (cont'd)}
+NetBeans
+\begin{itemize}
+\item{A software development platform, including an IDE}
+\item{The project has been actively developed as an open source project since 2000}
+\item{The \textit{platform} and \textit{java} sub-projects were chosen for modeling}
+\item{Uses Bugzilla for issue tracking}
+\item{Issue data was extracted from MySQL database dump}
 \end{itemize}
 \end{frame}
 
@@ -523,8 +481,8 @@ VARX model}
 \item{Not all of the data was preserved for modeling}
 \item{No-change issues
   \begin{itemize}
-  \item{Only issues with resolution \textit{fixed}, \textit{complete}, or \textit{done} were kept}
-  \item{Other issues did not result in any change, and were not included}  
+  \item{Only issues with resolutions such as \textit{fixed}, \textit{complete}, or \textit{done} were kept}
+  \item{Other issues did not result in any change and were not included}  
   \end{itemize}
 }
 \item{Orphan sub-tasks
@@ -532,7 +490,6 @@ VARX model}
   \item{Issues that are sub-tasks are first converted to be the same type as the parent issue}
   \item{Sub-tasks whose parent issue is not in the dataset are considered orphans, and discarded}
   \item{Orphan sub-tasks can not be identified as improvement or new feature}
-  \item{$20$ ($0.28\%$) orphaned sub-tasks were in the dataset}
   \end{itemize}
 }
 \end{itemize}
@@ -551,7 +508,6 @@ VARX model}
   \item{Number of new features resolved}
   \end{itemize}
 }
-\item{A 7-day sampling period was used}
 \end{itemize}
 \end{frame}
 
@@ -623,6 +579,17 @@ VARX model}
 \end{itemize}
 \end{frame}
 
+\begin{frame}[t]
+\frametitle{Time Windowing (cont'd)}
+To still cover the entire dataset, the modeling methods are applied as the window advances by one sample . This is termed a \textit{sliding window}.
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=\textwidth]{assets/time_series_sliding_window.png}
+\caption{Sliding time window moves over the entire time series.}
+\end{center}
+\end{figure}
+\end{frame}
+
 \section{Results}
 
 \begin{frame}
@@ -631,236 +598,365 @@ VARX model}
 \end{center}
 \end{frame}
 
-\subsection{Data Methodology}
+\subsection{Data Methods}
 
 \begin{frame}[t]
-\frametitle{\textit{MongoDB} Time Series Data}
-Time series data was obtained by sampling the \textit{MongoDB} dataset with a 7-day sample period
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[height=.6\textheight]{assets/time_series.eps}
-\caption{\textit{MongoDB} time series data}
-\end{center}
-\end{figure}
-\end{frame}
-
-\begin{frame}[t]
-\frametitle{Stationarity \& Differencing}
-\footnotesize{
-\begin{itemize}
-\item{At first, ADF and KPSS test results disagreed}
-\item{After differencing, test results agreed}
-\end{itemize}
-}
-\vspace{-.5cm}
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[height=.6\textheight]{assets/time_series_diff.eps}
-\caption{\textit{MongoDB} time series data after differencing}
-\end{center}
-\end{figure}
-\end{frame}
-
-\begin{frame}[t]
-\frametitle{Time Windowing}
-\begin{itemize}
-\item{A 78-week time window (approximately 18 months) was chosen}
-\item{Three of these windowed periods, non-overlapping, were used for modeling}
-\item{Since the data is being differenced, the first sample (week) is skipped}
-\item{These windowed periods are denoted $W_{2-79}$, $W_{80-157}$, and $W_{158-235}$}
-\item{Modeling methodology is applied to each}
-\end{itemize}
-\end{frame}
-
-\subsection{Modeling Methodology}
-
-\begin{frame}[t]
-\frametitle{Model Specification, Estimation, and Diagnostic Checking}
-\begin{itemize}
-\item{Using $K_{min} = 4$, maximum model order is obtained by
-\begin{equation}
-p_{max} = \left \lfloor \frac{78}{(3)(4)} \right \rfloor = \lfloor 6.5 \rfloor = 6
-\end{equation}
-}
-\item{Models of order $1$ through $p_{max}=6$ were estimated for diagnostic checking}
-\item{All models were found to be stable}
-\item{Several model orders were found to be inadequate by the Ljung-Box test:
-  \begin{itemize}
-  \item{Orders 1-2 for period $W_{2-79}$}
-  \item{Order 5 for period $W_{158-235}$}
-  \end{itemize}
-}
-\end{itemize}
-\end{frame}
-
-\begin{frame}[t]
-\frametitle{Model Selection}
-\begin{itemize}
-\item{Models found to be stable and not inadequate were considered for selection}
-\item{A different model was selected for each windowed period}
-\item{Lower AIC score is better}
-\end{itemize}
-\footnotesize{
-\begin{table}[htbp]
-  \centering
-  \begin{tabular}{ c | r | r | r }
-    ~ & \multicolumn{3}{|c}{AIC score} \\
-    Model order & $W_{2-79}$ & $W_{80-157}$ & $W_{158-235}$ \\
-    \hline
-    1 & N/A & \textbf{429.8} & \textbf{477.9} \\
-    2 & N/A & 439.3 & 482.4 \\
-    3 & 400.8 & 440.9 & 489.7 \\
-    4 & \textbf{400.3} & 450.2 & 499.9 \\ 
-    5 & 404.0 & 456.7 & N/A \\
-    6 & 414.9 & 461.7 & 508.8 \\
-    \hline
-  \end{tabular}
-\caption{Results of model selection, using AIC score to compare models of different order.}
-\end{table}
-}
-\end{frame}
-
-
-\begin{frame}[t]
-\frametitle{One-step Predictions}
-\small{The fit for each selected model is demonstrated by plotting one-step predictions along with actual values.}
-
-\begin{figure}[htbp]
+\frametitle{Data collection results}
+Summary of the collected data
+\begin{table}
 \centering
-\vspace{-.25in}
-\subfloat{
-\includegraphics[width=.65\textwidth]{assets/one-step_predictions_2-79.eps}
-}\\
-\vspace{-.6in}
-\subfloat{
-\includegraphics[width=.65\textwidth]{assets/one-step_predictions_80-157.eps}
-}\\
-\vspace{-.6in}
-\subfloat{
-\includegraphics[width=.65\textwidth]{assets/one-step_predictions_158-235.eps}
-}%
-\caption{Actual values (solid) vs. one-step predictions (dotted), for each model selected by AIC score.}
-\end{figure}
+\scriptsize  
+\begin{tabular}{c | c | c | c}
+Project Product & Date Range & Initial Issue Count & Final Issue Count \\
+Name &  & Count & Count \\
+\hline
+MongoDB \textit{core server} & Apr, 2009 - Jan, 2015 & 7,007 & 6,971 \\
+Hibernate \textit{orm} & Apr, 2003 - Apr, 2015 & 14,262 & 8,278 \\
+NetBeans \textit{platform} & Jan, 2001 - Jun, 2010 & 24,745 & 11,335 \\
+NetBeans \textit{java} & Jan, 2001 - Jun, 2010 & 18,313 & 8,699 \\
+\hline
+\end{tabular}
+\end{table}
+It is worth noting that none of the datasets contained many orphaned subtasks.
+The highest number found was 80 in the Hibernate \textit{orm} dataset.
 \end{frame}
-
-
-\subsection{Forecasting}
 
 \begin{frame}[t]
-\frametitle{Forecasting Results}
-\begin{itemize}
-\item{A range of hypothetical future values for improvements and new features were used to make defect predictions}
-\item{This simulates the use of defect prediction for release planning}
-\item{Single-step, out-of-sample forecast}
-\item{Inputs were differenced, and difference was removed from output}
-\item{Results include 75\% and 90\% confidence intervals}
-\item{Forecast results are shown only for the first time window, $W_{2-79}$}
-\end{itemize}
-\end{frame}
+\frametitle{Sampling Results}
+Not knowing which sampling period would work best, sampling was performed for each of the
+following sampling periods: 7 days, 14 days, and 30 days.
 
-\begin{frame}[t]{Forecasting Results (cont'd)}
-\footnotesize{
-\begin{itemize}
-\item{The actual number of improvements and features was 4 and 0}
-\item{Actual number of bugs was 18}
-\item{For the actual input values, the 90\% confidence interval does not include 18}
-\end{itemize}
-
-\vspace{-.5cm}
-\begin{table}[htbp]
-  \centering
-\caption{Forecasting at the end of the first time window, $W_{2-79}$.}
-  \begin{tabular}{ c | c | c | c | c | c | c }
-    Improvements & Features & 90\% low & 75\% low & Mean & 75\% high & 90\% high \\
-    \hline
-2 & 0 & 5.61 & 6.72 & 9.31 & 11.89 & 13.00 \\
-2 & 1 & 5.54 & 6.66 & 9.24 & 11.82 & 12.93 \\
-2 & 2 & 5.48 & 6.59 & 9.17 & 11.75 & 12.86 \\
-2 & 3 & 5.41 & 6.52 & 9.1 & 11.69 & 12.8 \\
-4 & 0 & 6.4 & 7.51 & 10.09 & 12.68 & 13.79 \\
-4 & 1 & 6.33 & 7.44 & 10.03 & 12.61 & 13.72 \\
-4 & 2 & 6.27 & 7.38 & 9.96 & 12.54 & 13.65 \\
-4 & 3 & 6.2 & 7.31 & 9.89 & 12.48 & 13.59 \\
-    \hline
-  \end{tabular}
-\end{table}
-}
-\end{frame}
-
-
-\begin{frame}[t]{Forecasting Results (cont'd)}
-\begin{itemize}
-\item{Low accuracy for the predictions is concerning}
-\item{For the next window, $W_{80-157}$, the actual number of future bugs was 17}
-\item{This was inside the 90\% confidence interval, which spanned from 13.38 to 18.00}
-\item{This result conflicts with that of the previous window}
-\end{itemize}
-\end{frame}
-
-\begin{frame}[t]{Sliding Window Forecasts}
-\begin{itemize}
-\item{How useful is the VARX model in general, considering these conflicting results?}
-\item{To find out, a sliding 78-week window was used}
-\item{The sliding window started at the first sample period, and was shifted by one sample period after modeling}
-\item{Only the actual number of improvements and features were used in this forecasting}
-\end{itemize}
-\end{frame}
-
-\begin{frame}[t]{Sliding Window Forecasts (cont'd)}
-\footnotesize{
-\begin{itemize}
-\item{Errors between the mean forecasted and actual number of bugs is shown as a histogram}
-\item{The histogram appears to be normally distributed (good)}
-\item{The variability is quite large (bad)}
-\item{The actual number of bugs was inside the 90\% confidence interval for 23.87\% of the sliding window ranges}
-\end{itemize}
-\vspace{-.5cm}
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=.9\textwidth]{assets/forecast_errors.eps}
-\caption{Histogram of errors in forecast mean obtained using a 78-week sliding window.}
+\includegraphics[width=.5\textwidth]{assets/hibernate_time_series_14.eps}
+\caption{Time series data from sampling the Hibernate \textit{orm} dataset with a period of 14 days.}
 \end{center}
 \end{figure}
+
+\end{frame}
+
+\begin{frame}[t]
+\frametitle{Stationarity Testing \& Differencing Results}
+\begin{itemize}
+\item
+The time series were found almost without exception to be non-stationary.
+\item
+Differencing was found to remove nonstationarity
+\item
+Not knowing how differencing would affect model accuracy, data differencing of degrees of 0, 1, and 2 were made available for the modeling phase
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[t]
+\frametitle{Windowing Results}
+Not knowing which window size would work best for the sliding window, a range
+of window sizes were selected for each sampling period.
+
+\begin{table}
+\centering
+\scriptsize  
+\caption{Sliding windows sizes used}
+\begin{tabular}{c | c}
+Sampling Period & Sliding Window Sizes \\
+
+\hline
+7 days & 36, 39, 42, 45, 48, 51, 54, 57, 60, 63, 66, 69, 72, 75, 78 \\
+14 days & 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54 \\
+30 days & 12, 15, 18, 21, 24, 27, 30, 33, 36 \\
+\hline
+\end{tabular}
+\end{table}
+
+\end{frame}
+
+\subsection{Modeling Methods}
+
+\begin{frame}[t]
+\frametitle{Exploratory Results}
+\begin{itemize}
+\item{Modeling methods were first applied using the sliding window, in an exploratory fashion}
+\item{Sampling period, window size, and degree of differencing are varied}
+\item{Results are compared by the following metrics
+\begin{itemize}
+\item{The none-valid proportion}
+\item{The non-normal proportion}
+\item{Root-mean-square error (RMSE), which is the standard deviation of the error distribution}
+\item{The in-interval proportion}
+\end{itemize}
 }
+\item{First two metrics measure validity}
+\item{Last two metrics measure accuracy}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]
+\frametitle{Exploratory Results (cont'd)}
+\begin{itemize}
+\item
+The only clear trend is that a higher degree of differencing results in lower model accuracy
+\item
+Other trends are not consistent for different sampling periods and across datasets.
+\item
+For a given dataset, the sampling period and window size can be chosen to maximize validity and accuracy.
+\end{itemize}
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=.5\textwidth]{assets/mongodb_pnonevalid_14}
+\caption{An example of the inconsistent trends, from the MongoDB \textit{core server} dataset.}
+\end{center}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}[t]
+\frametitle{Exploratory Results (cont'd)}
+Sliding window parameter values were selected based on results from exploratory modeling.
+
+\begin{table}
+\centering
+\scriptsize  
+\begin{tabular}{c | c | c | c}
+Dataset & Degree of & Period & Window \\
+~ & Differencing & ~ & ~ \\
+\hline
+MongoDB \textit{core server} & 1 & 14 & 24 \\
+Hibernate \textit{orm} & 1 & 30 & 24 \\
+NetBeans \textit{platform} & 1 & 14 & 27 \\
+NetBeans \textit{java} & 1 & 14 & 30 \\
+\hline
+\end{tabular}
+\end{table}
+
 \end{frame}
 
 
-\section{Conclusions}
+
+\begin{frame}[t]
+\frametitle{Final Results}
+\begin{itemize}
+\item{Final results were obtained by applying the sliding window approach to each dataset, using the parameter values from exploratory modeling.}
+\item{The results are compared by
+\begin{itemize}
+\item{The none-valid and non-normal proportions}
+\item{The distribution of actual compared to the distribution of predicted number of bugs}
+\item{The distribution of prediction errors, with scale and shape being described by RMSE and Q-Q plot, respectively}
+\item{The in-interval proportion for a 75\% or a 90\% prediction interval}
+\end{itemize}
+}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]
+\frametitle{Final Results (cont'd)}
+Summary of results
+\begin{table}[htbp]
+  \scriptsize
+  \centering
+  \begin{tabular}{ c | c | c | c | c | c | c }
+  \hline
+    & Window & None-valid & Non-normal &  & In 90\% & In 75\% \\
+  Dataset & Count & Proportion & Proportion & RMSE & Interval & Interval \\
+  \hline
+  MongoDB & 126 & 2.38\% & 0\% & 14.7230 & 36.59\% & 27.64\% \\
+  \textit{core server} &  &  &  &  &  &  \\
+  Hibernate & 121 & 4.13\% & 0.86\% & 10.2685 & 53.91\% & 45.22\% \\
+  \textit{orm} &  &  &  &  &  &  \\
+  NetBeans & 219 & 9.59\% & 2.53\% & 15.2702 & 46.11\% & 39.38\% \\
+  \textit{platform} &  &  &  &  &  &  \\
+  NetBeans & 216 & 12.96\% & 14.89\% & 18.0469 & 43.13\% & 30.63\% \\
+  \textit{java} &  &  &  &  &  &  \\
+  \hline
+  \end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}[t]
+\frametitle{Final Results (cont'd)}
+MongoDB \textit{core server} dataset
+\vspace{-.65in}
+\begin{figure}[htbp]
+\begin{center}
+\subfigure{
+  \includegraphics[width=0.4\textwidth]{assets/mongodb/hist_forecast_errors}
+}%
+\subfigure{
+  \includegraphics[width=0.4\textwidth]{assets/mongodb/qq_plot_forecast_errors}}\\ %
+\vspace{-.2in}
+\subfigure{
+  \includegraphics[width=0.4\textwidth]{assets/mongodb/bugs_comparison}  
+}%
+\end{center}
+\end{figure}
+\end{frame}
+
+\begin{frame}[t]
+\frametitle{Final Results (cont'd)}
+Hibernate \textit{orm} dataset
+\vspace{-.65in}
+\begin{figure}[htbp]
+\begin{center}
+\subfigure{
+  \includegraphics[width=0.4\textwidth]{assets/hibernate/hist_forecast_errors}
+}%
+\subfigure{
+  \includegraphics[width=0.4\textwidth]{assets/hibernate/qq_plot_forecast_errors}}\\ %
+\vspace{-.2in}
+\subfigure{
+  \includegraphics[width=0.4\textwidth]{assets/hibernate/bugs_comparison}  
+}%
+\end{center}
+\end{figure}
+\end{frame}
+
+\begin{frame}[t]
+\frametitle{Final Results (cont'd)}
+NetBeans \textit{platform} dataset
+\vspace{-.65in}
+\begin{figure}[htbp]
+\begin{center}
+\subfigure{
+  \includegraphics[width=0.4\textwidth]{assets/netbeans/platform/hist_forecast_errors}
+}%
+\subfigure{
+  \includegraphics[width=0.4\textwidth]{assets/netbeans/platform/qq_plot_forecast_errors}}\\ %
+\vspace{-.2in}
+\subfigure{
+  \includegraphics[width=0.4\textwidth]{assets/netbeans/platform/bugs_comparison}  
+}%
+\end{center}
+\end{figure}
+\end{frame}
+
+\begin{frame}[t]
+\frametitle{Final Results (cont'd)}
+NetBeans \textit{java} dataset
+\vspace{-.65in}
+\begin{figure}[htbp]
+\begin{center}
+\subfigure{
+  \includegraphics[width=0.4\textwidth]{assets/netbeans/java/hist_forecast_errors}
+}%
+\subfigure{
+  \includegraphics[width=0.4\textwidth]{assets/netbeans/java/qq_plot_forecast_errors}}\\ %
+\vspace{-.2in}
+\subfigure{
+  \includegraphics[width=0.4\textwidth]{assets/netbeans/java/bugs_comparison}  
+}%
+\end{center}
+\end{figure}
+\end{frame}
+
+
+
+\section{Conclusion}
 
 \begin{frame}
 \begin{center}
-\Large{Conclusion \& Future Work}
+\Large{Conclusion}
 \end{center}
 \end{frame}
 
-\subsection{Conclusions}
+\subsection{Discussion}
 
-\begin{frame}[t]{Conclusions}
-\footnotesize{
+\begin{frame}[t]{Discussion}
 \begin{itemize}
-\item{The VARX modeling methodology was successfully applied to the time series data collected from the \textit{MongoDB} project}
-\item{Models were created for each of three time windows}
-\item{A model was selected for each window}
-\item{Forecast results using the models were inconclusive}
-\item{A better picture of the prediction performance was obtained using a sliding window}
-\item{This resulted in a normally distributed error in the mean forecasted values}
-\item{A low proportion (23.87\%) of the sliding window ranges included the actual number of bugs in the 90\% confidence interval}
-\item{These results may indicate that a VARX model will not be useful to make predictions for the the MongoDB dataset}
+\item{Windowing was used to maximize validity and accuracy}
+\item{Validity
+\begin{itemize}
+\item{None-valid proportions were between 2\% and 13\%}
+\item{Non-normal proportions were between 0\% and 15\%}
+\item{Together, these proportions represent the risk that for any given sample
+window there will be no valid course for making a prediction}
+\end{itemize}}
+\item{Accuracy
+\begin{itemize}
+\item{in-interval proportions at a 90\% prediction interval were between 36\% and 54\%}
+\item{in-interval proportions at a 75\% prediction interval were between 27\% and 46\%}
+\item{RMSE was between 2.40 and 9.02 bugs per week}
+\item{The best results were for the Hibernate \textit{orm} dataset}
 \end{itemize}
 }
+\end{itemize}
 \end{frame}
 
-\subsection{Future Work}
 
-\begin{frame}{Future Work}
-Having applied the VARX time series model to one project dataset, a next step is to apply the methodology to other software project data sets, such as \textit{Eclipse} or \textit{Mozilla}, to more conclusively determine the model's usefulness.
+\begin{frame}[t]{Discussion (cont'd)}
+\begin{itemize}
+\item{The sliding window provides control over validity and accuracy}
+\item{It also conveys a picture of how a model can generally be expected
+to perform for any given window in the future}
+\end{itemize}
+
+\begin{table}[htbp]
+\centering
+\scriptsize
+\begin{tabular}{ p{.35\textwidth} | p{.6\textwidth} }
+  \hline
+  Modeling Results & Future Expectation \\
+  \hline
+  Low invalidity proportions & A valid model will likely be available \\
+  High in-interval proportion & Model prediction will likely not exceed prediction interval \\
+  Low RMSE & Model prediction error will likely be low \\
+  \hline
+\end{tabular}
+\end{table}
+
+\end{frame}
+
+
+\begin{frame}[t]{Future Work}
+Possible future research:
+\begin{itemize}
+
+\item{Use change management data in a time series model
+\begin{itemize}
+\item{Problems with issue tracking system (ITS) data:
+\begin{itemize}
+\item{Subject to human error (unknown lag time before changes are entered)}
+\item{Information is lost (change magnitude, location(s), author)}
+\end{itemize}}
+\item{ITS data for changes made (new features, improvements) can be replaced with change management data}
+\end{itemize}
+}
+
+\item{Use birth-death process models
+\begin{itemize}
+\item{The issue tracking system data will always be non-negative, since it is count data}
+\item{A birth-death process specifically models count data, being used for population size}
+\item{Does not require sampling or differencing}
+\item{Could directly model issue creation (birth) and resolution (death)}
+\end{itemize}
+}
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t]{Thanks \& Questions}
+\begin{itemize}
+\item{CS Faculty
+\begin{itemize}
+\item{Dr. Razvan Andonie}
+\item{Dr. Filip Jagodzinski}
+\item{Dr. John Anvik}
+\end{itemize}
+}
+\item{Math Faculty
+\begin{itemize}
+\item{Dr. Yvonne Chueh}
+\item{Dr. Kathryn Temple}
+\end{itemize}
+}
+\end{itemize}
 \end{frame}
 
 \section{References}
 
 \begin{frame}[allowframebreaks]{References}
 \begin{center}
-\bibliography{references}
+\bibliography{../references}
 \bibliographystyle{abbrv}
 \end{center}
 \end{frame}
