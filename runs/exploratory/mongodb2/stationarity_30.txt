@@ -1,0 +1,45 @@
+Stationarity of Bugs 
+----------------------------------------------
+Dickey Fuller test results: tau2 = -3.858221 (<1pct), phi1 = 7.500749 (<1pct)
+KPSS: 1.413058 (<1pct)
+
+Stationarity of Improvements 
+----------------------------------------------
+Dickey Fuller test results: tau2 = -2.543267 (>10pct), phi1 = 3.315932 (>10pct)
+KPSS: 1.056792 (<1pct)
+
+Stationarity of Features 
+----------------------------------------------
+Dickey Fuller test results: tau2 = -4.57232 (<1pct), phi1 = 10.47271 (<1pct)
+KPSS: 0.09289705 (>10pct)
+
+Stationarity of Bugs (1 Difference) 
+----------------------------------------------
+Dickey Fuller test results: tau2 = -9.255773 (<1pct), phi1 = 42.88765 (<1pct)
+KPSS: 0.03909661 (>10pct)
+
+Stationarity of Improvements (1 Difference) 
+----------------------------------------------
+Dickey Fuller test results: tau2 = -7.909538 (<1pct), phi1 = 31.31153 (<1pct)
+KPSS: 0.03764279 (>10pct)
+
+Stationarity of Features (1 Difference) 
+----------------------------------------------
+Dickey Fuller test results: tau2 = -8.244111 (<1pct), phi1 = 33.98363 (<1pct)
+KPSS: 0.03578 (>10pct)
+
+Stationarity of Bugs (2 Difference) 
+----------------------------------------------
+Dickey Fuller test results: tau2 = -10.69196 (<1pct), phi1 = 57.24367 (<1pct)
+KPSS: 0.06889476 (>10pct)
+
+Stationarity of Improvements (2 Difference) 
+----------------------------------------------
+Dickey Fuller test results: tau2 = -10.62259 (<1pct), phi1 = 56.44906 (<1pct)
+KPSS: 0.04677027 (>10pct)
+
+Stationarity of Features (2 Difference) 
+----------------------------------------------
+Dickey Fuller test results: tau2 = -12.05413 (<1pct), phi1 = 72.65554 (<1pct)
+KPSS: 0.0326762 (>10pct)
+
