@@ -1,0 +1,10 @@
+Before running src/extract_bugzilla.rb, a Bugzilla MySQL database needs to be loaded. Follow these instructions to load the database from a MySQL dump file (.sql).
+
+1. Create the database <db_name> in MySQL.
+
+      $ mysql -u root -p123456789
+      mysql> create database db_name;
+
+2. Load the dump file into the database.
+
+      mysql -u root -p123456789 db_name < dumpfile.sql
