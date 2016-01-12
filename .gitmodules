@@ -1,0 +1,3 @@
+[submodule "src/defectPrediction"]
+	path = src/defectPrediction
+	url = https://github.com/jamestunnell/defectPrediction
